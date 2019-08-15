@@ -27,5 +27,7 @@ public class Range {
 	public double getDiff() {
 		return max-min;
 	}
-	
+	public double getMid() {
+		return min+getDiff()/2;
+	}
 }

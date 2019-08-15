@@ -6,6 +6,7 @@ import java.awt.Color;
 public class View {
 
 	public int mapWidth, mapHeight, width, height;
+	public Model m;
 	
 	public View(int w, int h) {
 		width = w;
@@ -20,6 +21,6 @@ public class View {
 		for(int i=(int) (pixels.length*0.2); i<pixels.length; i++){
 			pixels[i] = Color.gray.getRGB();
 		}
-		return pixels;//test commit
+		return pixels;
 	}
 }

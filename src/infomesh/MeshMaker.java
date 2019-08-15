@@ -27,7 +27,7 @@ public class MeshMaker extends JFrame implements Runnable {
 		thread = new Thread(this);
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		pixels = pixels = ((DataBufferInt)image.getRaster().getDataBuffer()).getData();
-		camera = new Camera(4.5, 4.5, 1, 0, 0, -.66);
+		camera = new Camera(-2, 0, 1, 0, 0, -.66);
 		view = new View(WIDTH,HEIGHT);
 		setSize(WIDTH, HEIGHT);
 		setTitle("InfoMesh");
