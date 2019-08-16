@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 
 public class Model {
+	// Data
 	ArrayList<Node> nodes;
 	Range rangeX;//min and max ranges of dimension
 	Range rangeY;
