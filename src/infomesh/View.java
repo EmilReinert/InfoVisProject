@@ -53,19 +53,21 @@ public class View {
 				pixels[n] = Color.DARK_GRAY.getRGB();// Draws line in bg
 		}
 		//draw coord system
-		int origin_n = (int) (cosystem.origin.x*height+cosystem.origin.y);
+		int origin_n = (int) ((cosystem.origin.x-1)*width+cosystem.origin.y);
 		for(int n=0; n<pixels.length; n++) {
+			
 			// Z AXis
-			if(n%width==(int)cosystem.origin.y&&n<=origin_n) pixels[n]= Color.BLACK.getRGB();
+			if(n%width==(int)cosystem.origin.y&&n<origin_n) pixels[n]= Color.BLACK.getRGB();
 			//Y
-			if(n>origin_n ) {
-				for (int i = 0; i<height-(int)cosystem.origin.y ;i++) {pixels[origin_n+i]=Color.BLACK.getRGB();}
+			if(n == origin_n) {System.out.println(origin_n+" "+cosystem.origin.x+" "+cosystem.origin.y+" "+(n-n%width)/width+" "+n%width);pixels[n]= Color.RED.getRGB();}
+			
+			if(n>origin_n&&n/width<cosystem.origin.x){pixels[n]=Color.BLACK.getRGB();}
 				//X starting from origin
 
 			}
-		}
+		
 		drawLine(pixels,cosystem.origin, new Vec2(height,0));
-		cosystem.origin.y+=1;cosystem.origin.x+=1;
+		//cosystem.origin.y-=1;cosystem.origin.x-=1;
 		return pixels;
 	}
 }
