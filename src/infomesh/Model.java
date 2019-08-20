@@ -17,14 +17,15 @@ public class Model {
 	public Model(File f) {
 		nodes = new ArrayList<>();
 		loadNodes(f);
-		makeRanges();
+		loadRanges();
 		System.out.println(rangeX.toString());System.out.println(rangeY.toString());System.out.println(rangeZ.toString());
-		makeDimensions();
+		loadDimensions();
 	}
 	
 	
 	public void loadNodes(File f) {
 		//9 example nodes
+		// NEEDS TO BE SORTED
 		//TODO
 		nodes.add(new Node(1995,1,0.5));
 		nodes.add(new Node(1995,2,0.4));
@@ -37,7 +38,7 @@ public class Model {
 		nodes.add(new Node(1997,3,0.4));
 	}
 	
-	public void makeRanges() {
+	public void loadRanges() {
 		// calculating min and max ranges for XYZ from node data
 		double min,max;
 		min = 100000000; max = -100000000;
@@ -64,7 +65,7 @@ public class Model {
 		rangeZ = new Range(min,max);
 	}
 	
-	public void makeDimensions(){
+	public void loadDimensions(){
 		//calculating Dimensions aka step length for xy plane cuts
 		// count the amount of same x appearances for y dim and vice versa
 		// there are no two same x,y pairs -> otherwise throws exception

@@ -23,12 +23,13 @@ public class MeshMaker extends JFrame implements Runnable {
 	public Camera camera;
 	public View view; //= Screen
 	
-	public MeshMaker() {
+	public MeshMaker(Model m, CoSystem co) {
 		thread = new Thread(this);
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		pixels = pixels = ((DataBufferInt)image.getRaster().getDataBuffer()).getData();
 		camera = new Camera(-2, 0, 1, 0, 0, -.66);
-		view = new View(WIDTH,HEIGHT);
+		view = new View(WIDTH,HEIGHT,m,co);
+		addMouseListener(view.cosystem);addMouseMotionListener(view.cosystem);
 		setSize(WIDTH, HEIGHT);
 		setTitle("InfoMesh");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -84,8 +85,9 @@ public class MeshMaker extends JFrame implements Runnable {
 	}
 	
 	public static void main(String[] args) {
+		CoSystem co = new CoSystem(new Vec2(300,300), HEIGHT, WIDTH);
 		Model m = new Model(new File("data/Data_Mortality.txt"));
-		MeshMaker mesh = new MeshMaker();
+		MeshMaker mesh = new MeshMaker(m,co);
 	}
 
 
