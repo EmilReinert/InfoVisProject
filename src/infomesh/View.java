@@ -53,13 +53,13 @@ public class View {
 		//starting with drawing of points at 3d diagram positions
 		
 		//bottom plane starting point z = 0
-		int pix_start = 0;
+		int pix_start = 0;double ix_start =0;
 		int origin= (int) ((cosystem.origin.x-1)*width+cosystem.origin.y); // = origin start
 		
 		/// steps in xy plane
 		//for x step we need the x axis function
-		int x_step = (int) (((height-cosystem.origin.x)/(model.dimX-1))*width);
-		int y_step = (int) ((width-cosystem.origin.y-1)/(model.dimY-1));
+		int x_step = (int) (((height-cosystem.origin.x)/(model.dimX-1)));
+		int y_step = (int) ((width-cosystem.origin.y)/(model.dimY-1));
 		// x offset from diagonal axis
 		int x_off,x; double f_x;
 		Vec2 first = cosystem.origin;
@@ -75,9 +75,10 @@ public class View {
 				x= dim_x;
 				f_x = m*x+t;
 				x_off = (int) (cosystem.origin.y-f_x);
-				pix_start = origin+ dim_x*x_step+dim_y*y_step;
+				pix_start = origin+ dim_x*x_step*width+dim_y*y_step;
 				if(pix_start<pixels.length)
 					pixels[pix_start]=Color.WHITE.getRGB();
+				if(dim_x ==1)System.out.println(" "+x_step);
 			}
 		}
 			
