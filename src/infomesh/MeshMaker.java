@@ -2,18 +2,23 @@ package infomesh;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.Line2D;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.io.File;
+
+import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 
 
 public class MeshMaker extends JFrame implements Runnable {
 	
 	//For Window pixle size
-	public static int WIDTH = 800;
+	public static int WIDTH = 800;//TODO make adjustable
 	public static int HEIGHT = 800;	
 	
 	private Thread thread;
@@ -24,6 +29,14 @@ public class MeshMaker extends JFrame implements Runnable {
 	public View view; //= Screen
 	
 	public MeshMaker(Model m, CoSystem co) {
+		
+	    JPanel panel = new JPanel();
+	    getContentPane().add(panel);
+
+	    JButton button = new JButton("press");
+	    panel.add(button);
+		
+		
 		thread = new Thread(this);
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		pixels = pixels = ((DataBufferInt)image.getRaster().getDataBuffer()).getData();
@@ -83,6 +96,13 @@ public class MeshMaker extends JFrame implements Runnable {
 			render();//displays to the screen unrestricted time
 		}
 	}
+	  public void paint(Graphics g) {
+		    super.paint(g); 
+		    Graphics2D g2 = (Graphics2D) g;
+		    Line2D lin = new Line2D.Float(100, 100, 250, 260);
+		    g2.draw(lin);
+		  }
+
 	
 	public static void main(String[] args) {
 		CoSystem co = new CoSystem(new Vec2(300,300), HEIGHT, WIDTH);

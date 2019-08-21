@@ -84,4 +84,9 @@ public class Model {
 			dimY = countX;
 		}
 	}
+	
+	public int getZData(int index) {
+		// TODO offset and realative heights, must be positive
+		return  (int) (100*nodes.get(index).z);
+	}
 }

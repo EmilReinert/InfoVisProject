@@ -2,6 +2,7 @@ package infomesh;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.time.OffsetDateTime;
 
 
 public class View {
@@ -18,7 +19,18 @@ public class View {
 		cosystem = co;
 	}
 	
-	public void drawLine(int[]pixels,Vec2 a, Vec2 b) {
+	public int vec2Int(Vec2 v) {
+		return (int) ((v.x-1)*width+v.y);
+	}
+	
+	public Vec2 int2Vec(int i) {
+		int x =(i-i%width)/width;
+		int y= i%width;
+		return new Vec2(x, y);
+	}
+	
+	
+	public void drawLine(int[]pixels,Vec2 a, Vec2 b,int color ) {
 		//draws line on screen by manipulating pixel values
 		Vec2 first,second;//System.out.println(a.x+" "+b.x);
 		if (a.x<b.x) {first = a;second=b;}
@@ -27,6 +39,10 @@ public class View {
 			//horizontal line TODO
 			return;
 		}
+		// Vertical Line
+		if(a.y == b.y) {}
+		
+		
 		//Greradenfunktion
 		double m; //STEIGUNG
 		if(first.y>second.y)m=1;
@@ -48,13 +64,19 @@ public class View {
 					
 	}
 	
+	public void drawLine(int[] pixels, int a, int b, int color) {
+		Vec2 vec_a = int2Vec(a);
+		Vec2 vec_b = int2Vec(b);
+		drawLine(pixels, vec_a, vec_b, color);
+	}
+	
 	public void drawData(int[] pixels) {
 		//main datavizulization method
 		//starting with drawing of points at 3d diagram positions
 		
 		//bottom plane starting point z = 0
-		int pix_start = 0;double ix_start =0;
-		int origin= (int) ((cosystem.origin.x-1)*width+cosystem.origin.y); // = origin start
+		int pix_start = 0,pix_end =0;
+		int origin=vec2Int(cosystem.origin); // = origin start
 		
 		/// steps in xy plane
 		//for x step we need the x axis function
@@ -67,18 +89,30 @@ public class View {
 		double m = -1*(second.y-first.y)/(second.x-first.x);
 		double t= first.y-first.x*m; //x verschiebung 
 		
+		int data_count=0; // index for data nodes
 		
 		//looping throufh X-Y dependent dimensions
 		for (int dim_x = 0; dim_x<model.dimY; dim_x++) {
 			for (int dim_y = 0; dim_y < model.dimX;dim_y++) {
 				//determine pix start
-				x= dim_x;
+				pix_start = origin+ dim_x*x_step*width+dim_y*y_step;
+				x= (pix_start-pix_start%width)/width;
 				f_x = m*x+t;
 				x_off = (int) (cosystem.origin.y-f_x);
-				pix_start = origin+ dim_x*x_step*width+dim_y*y_step;
+				pix_start+= x_off;
 				if(pix_start<pixels.length)
-					pixels[pix_start]=Color.WHITE.getRGB();
-				if(dim_x ==1)System.out.println(" "+x_step);
+					pixels[pix_start]=Color.WHITE.getRGB();// draw point
+				//determine pix end
+				
+				pix_end = pix_start-model.getZData(data_count)*width;//takes data at given position
+				if(pix_end<0) {//pixels out of frame
+					pix_end=0; System.out.println("attention, some pixel values are outside of the coordinate system");}
+				if(pix_end<pixels.length)
+					pixels[pix_end]=Color.RED.getRGB(); // draw point
+				// drawing horizontal height line
+				//drawLine(pixels, pix_start, pix_end, Color.WHITE.getRGB());
+				
+				data_count++;
 			}
 		}
 			
@@ -91,7 +125,7 @@ public class View {
 				pixels[n] = Color.DARK_GRAY.getRGB();// Draws line in bg
 		}
 		//draw coord system
-		int origin_n = (int) ((cosystem.origin.x-1)*width+cosystem.origin.y);
+		int origin_n = vec2Int(cosystem.origin);
 		for(int n=0; n<pixels.length; n++) {
 			
 			//Z AXis
@@ -102,7 +136,7 @@ public class View {
 		//draw origin
 		pixels[origin_n]= Color.RED.getRGB();
 		//X Axis
-		drawLine(pixels,cosystem.origin, new Vec2(height,0));
+		drawLine(pixels,cosystem.origin, new Vec2(height,0), Color.BLACK.getRGB());
 		
 		
 		//DATA
