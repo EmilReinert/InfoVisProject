@@ -6,13 +6,17 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 
 public class CoSystem implements MouseListener,MouseMotionListener{
-	Vec2 origin;
-	int height, width;
+	private Vec2 origin;
+	private int height, width;
 	
 	public CoSystem(Vec2 o, int h, int w) {
 		origin = o;
 		height=h;
 		width=w;
+	}
+	
+	public Vec2 getOrigin() {
+		return origin;
 	}
 
 	@Override
@@ -24,7 +28,10 @@ public class CoSystem implements MouseListener,MouseMotionListener{
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+		int x = e.getY();
+		int y =e.getX();
+		if(x>0&&x<height)origin.x=x;
+		if(y>0&&y<width)origin.y=y;
 	}
 
 	@Override
@@ -48,10 +55,7 @@ public class CoSystem implements MouseListener,MouseMotionListener{
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		// TODO Auto-generated method stub
-		int x = e.getY();
-		int y =e.getX();
-		if(x>0&&x<height)origin.x=x;
-		if(y>0&&y<width)origin.y=y;
+
 	}
 
 	@Override

@@ -5,7 +5,9 @@ import java.util.ArrayList;
 
 public class Model {
 	// Data
-	ArrayList<Node> nodes;
+	private ArrayList<Node> raw_nodes;// node list
+	private Node[][] nodes; //node mapping
+	
 	Range rangeX;//min and max ranges of dimension
 	Range rangeY;
 	Range rangeZ;
@@ -15,27 +17,41 @@ public class Model {
 	
 	
 	public Model(File f) {
-		nodes = new ArrayList<>();
-		loadNodes(f);
+		raw_nodes = new ArrayList<>();
+		loadRawNodes(f);
 		loadRanges();
-		System.out.println(rangeX.toString());System.out.println(rangeY.toString());System.out.println(rangeZ.toString());
+		//System.out.println(rangeX.toString());System.out.println(rangeY.toString());System.out.println(rangeZ.toString());
 		loadDimensions();
+		makeNodes();
 	}
 	
 	
-	public void loadNodes(File f) {
+	public void loadRawNodes(File f) {
 		//9 example nodes
 		// NEEDS TO BE SORTED
 		//TODO
-		nodes.add(new Node(1995,1,0.5));
-		nodes.add(new Node(1995,2,0.4));
-		nodes.add(new Node(1995,3,0.45));
-		nodes.add(new Node(1996,1,0.4));
-		nodes.add(new Node(1996,2,0.35));
-		nodes.add(new Node(1996,3,0.36));
-		nodes.add(new Node(1997,1,0.5));
-		nodes.add(new Node(1997,2,0.37));
-		nodes.add(new Node(1997,3,0.4));
+		raw_nodes.add(new Node(1995,1,0.5));
+		raw_nodes.add(new Node(1995,2,0.4));
+		raw_nodes.add(new Node(1995,3,0.45));
+		raw_nodes.add(new Node(1996,1,0.5));
+		raw_nodes.add(new Node(1996,2,0.35));
+		raw_nodes.add(new Node(1996,3,0.36));
+		raw_nodes.add(new Node(1997,1,0.5));
+		raw_nodes.add(new Node(1997,2,0.37));
+		raw_nodes.add(new Node(1997,3,0.4));
+	}
+	
+	public void makeNodes() {
+		//raw to mapped nodes
+		//TODO handle possible errors
+		nodes = new Node[this.dimX][this.dimY];
+		int dimx =0,dimy =0;
+		for(int i = 0;i<raw_nodes.size();i++) {
+			//System.out.println(raw_nodes.get(i).z+" "+dimx+" "+dimy);
+			nodes[dimx][dimy]=raw_nodes.get(i);
+			dimy++;
+			if(dimy>=this.dimY) {dimy=0;dimx++;}
+		}
 	}
 	
 	public void loadRanges() {
@@ -43,14 +59,14 @@ public class Model {
 		double min,max;
 		min = 100000000; max = -100000000;
 		//X ranges
-		for(Node n: nodes) {
+		for(Node n: raw_nodes) {
 			if(n.x<min)min = n.x;
 			if(n.x>max)max = n.x;
 		}
 		rangeX = new Range(min,max);
 		min = 100000000; max = -100000000;
 		//Y ranges
-		for(Node n: nodes) {
+		for(Node n: raw_nodes) {
 			if(n.y<min)min = n.y;
 			if(n.y>max)max = n.y;
 			
@@ -58,7 +74,7 @@ public class Model {
 		rangeY = new Range(min,max);
 		min = 100000000; max = -100000000;
 		//Z ranges
-		for(Node n: nodes) {
+		for(Node n: raw_nodes) {
 			if(n.z<min)min = n.z;
 			if(n.z>max)max = n.z;
 		}
@@ -71,22 +87,26 @@ public class Model {
 		// there are no two same x,y pairs -> otherwise throws exception
 		int countX=0;
 		int countY=0;
-		double X = nodes.get(0).x;
-		double Y = nodes.get(0).y;
-		for(Node n: nodes) {
+		double X = raw_nodes.get(0).x;
+		double Y = raw_nodes.get(0).y;
+		for(Node n: raw_nodes) {
 			if (n.x==X)countX++;
 			if(n.y==Y)countY++;
 		}
 		//test if findings make sense
-		if ((countX*countY)!=nodes.size())System.err.println("The given Data violates the required dimensions for a rectangle XY plane");
+		if ((countX*countY)!=raw_nodes.size())System.err.println("The given Data violates the required dimensions for a rectangle XY plane");
 		else {
 			dimX = countY;
 			dimY = countX;
 		}
 	}
+		
+	public int getZData(int x, int y) {
+		// TODO offset and relative heights, must be positive
+		return (int) (300*nodes[x][y].z);
+	}
 	
-	public int getZData(int index) {
-		// TODO offset and realative heights, must be positive
-		return  (int) (100*nodes.get(index).z);
+	public Node getNode(int x, int y) {
+		return nodes[x][y];
 	}
 }

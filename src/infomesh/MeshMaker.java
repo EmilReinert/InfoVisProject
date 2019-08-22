@@ -33,8 +33,6 @@ public class MeshMaker extends JFrame implements Runnable {
 	    JPanel panel = new JPanel();
 	    getContentPane().add(panel);
 
-	    JButton button = new JButton("press");
-	    panel.add(button);
 		
 		
 		thread = new Thread(this);
@@ -42,7 +40,7 @@ public class MeshMaker extends JFrame implements Runnable {
 		pixels = pixels = ((DataBufferInt)image.getRaster().getDataBuffer()).getData();
 		camera = new Camera(-2, 0, 1, 0, 0, -.66);
 		view = new View(WIDTH,HEIGHT,m,co);
-		addMouseListener(view.cosystem);addMouseMotionListener(view.cosystem);
+		addMouseListener(view.getCoord());addMouseMotionListener(view.getCoord());
 		setSize(WIDTH, HEIGHT);
 		setTitle("InfoMesh");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -80,7 +78,7 @@ public class MeshMaker extends JFrame implements Runnable {
 	@Override
 	public void run() {
 		long lastTime = System.nanoTime();
-		final double ns = 1000000000.0 / 60.0;//60 times per second
+		final double ns = 1000000000.0/5;/// / 60.0;//60 times per second
 		double delta = 0;
 		requestFocus();
 		while(running) {
@@ -96,13 +94,15 @@ public class MeshMaker extends JFrame implements Runnable {
 			render();//displays to the screen unrestricted time
 		}
 	}
-	  public void paint(Graphics g) {
-		    super.paint(g); 
-		    Graphics2D g2 = (Graphics2D) g;
-		    Line2D lin = new Line2D.Float(100, 100, 250, 260);
-		    g2.draw(lin);
-		  }
-
+	
+	/*///FUNCTION FOR POSSIBLE JPANEL??
+	public void paint(Graphics g) {
+	    super.paint(g); 
+	    Graphics2D g2 = (Graphics2D) g;
+	    Line2D lin = new Line2D.Float(100, 100, 250, 260);
+	    g2.draw(lin);
+	  }
+	 */
 	
 	public static void main(String[] args) {
 		CoSystem co = new CoSystem(new Vec2(300,300), HEIGHT, WIDTH);
