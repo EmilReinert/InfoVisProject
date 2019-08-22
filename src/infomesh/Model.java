@@ -13,23 +13,25 @@ public class Model {
 	Range rangeZ;
 	int dimX; // length of x data = amount of x vertices 
 	int dimY; 
-	float field = 0.2f; //Z covered area in percent -> |///|field|///| 
+	
+	private CoSystem co;
 	
 	
-	public Model(File f) {
+	public Model(File f, CoSystem co) {
 		raw_nodes = new ArrayList<>();
-		loadRawNodes(f);
-		loadRanges();
-		//System.out.println(rangeX.toString());System.out.println(rangeY.toString());System.out.println(rangeZ.toString());
-		loadDimensions();
-		makeNodes();
+		this.co = co;
+		loadRawExNodes(f);//loadRawNodes(f); // get raw node data
+		loadRanges(); // load all min max ranges for X Y Z
+		System.out.println(rangeX.toString());System.out.println(rangeY.toString());System.out.println(rangeZ.toString());
+		loadDimensions(); // create X Y plane dimensions
+		adjustValues(); // adjust z to be percentage values 
+		makeNodes(); // map raw nodes to X Y plane 
+
 	}
-	
-	
-	public void loadRawNodes(File f) {
+
+
+	public void loadRawExNodes(File f) {
 		//9 example nodes
-		// NEEDS TO BE SORTED
-		//TODO
 		raw_nodes.add(new Node(1995,1,0.5));
 		raw_nodes.add(new Node(1995,2,0.4));
 		raw_nodes.add(new Node(1995,3,0.45));
@@ -41,17 +43,8 @@ public class Model {
 		raw_nodes.add(new Node(1997,3,0.4));
 	}
 	
-	public void makeNodes() {
-		//raw to mapped nodes
-		//TODO handle possible errors
-		nodes = new Node[this.dimX][this.dimY];
-		int dimx =0,dimy =0;
-		for(int i = 0;i<raw_nodes.size();i++) {
-			//System.out.println(raw_nodes.get(i).z+" "+dimx+" "+dimy);
-			nodes[dimx][dimy]=raw_nodes.get(i);
-			dimy++;
-			if(dimy>=this.dimY) {dimy=0;dimx++;}
-		}
+	public void loadRawNodes(File f) {
+		
 	}
 	
 	public void loadRanges() {
@@ -100,10 +93,38 @@ public class Model {
 			dimY = countX;
 		}
 	}
-		
+	
+	public void adjustValues() {
+		// adjust z to be percentage values 
+		//based on ranges
+		double span = rangeZ.getDiff();
+		double min = rangeZ.getMin();
+		for(Node n: raw_nodes) {
+			n.z = (n.z-min)/span;// relative span values
+		}
+	}
+
+	public void makeNodes() {
+		//raw to mapped nodes
+		//TODO handle possible errors
+		nodes = new Node[this.dimX][this.dimY];
+		int dimx =0,dimy =0;
+		for(int i = 0;i<raw_nodes.size();i++) {
+			//System.out.println(raw_nodes.get(i).z+" "+dimx+" "+dimy);
+			nodes[dimx][dimy]=raw_nodes.get(i);
+			dimy++;
+			if(dimy>=this.dimY) {dimy=0;dimx++;}
+		}
+	}
+	
+	
 	public int getZData(int x, int y) {
-		// TODO offset and relative heights, must be positive
-		return (int) (300*nodes[x][y].z);
+		// adjust field and multiply relavtive value by z axis length
+		return (int) ((nodes[x][y].z*co.getField()+((1-co.getField())/2))*co.getOrigin().x);
+	}
+	
+	public void changeFiel(double in) {
+		
 	}
 	
 	public Node getNode(int x, int y) {
