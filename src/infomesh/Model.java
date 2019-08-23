@@ -1,6 +1,8 @@
 package infomesh;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 
 public class Model {
@@ -20,7 +22,7 @@ public class Model {
 	public Model(File f, CoSystem co) {
 		raw_nodes = new ArrayList<>();
 		this.co = co;
-		loadRawExNodes(f);//loadRawNodes(f); // get raw node data
+		loadRawNodes(f); // get raw node data
 		loadRanges(); // load all min max ranges for X Y Z
 		System.out.println(rangeX.toString());System.out.println(rangeY.toString());System.out.println(rangeZ.toString());
 		loadDimensions(); // create X Y plane dimensions
@@ -44,7 +46,33 @@ public class Model {
 	}
 	
 	public void loadRawNodes(File f) {
-		
+		String [] data_line;
+		double x, y, z; // data for one node
+		try {
+			int line_count = 0;
+			BufferedReader reader = new BufferedReader(new FileReader(f));
+			String line =reader.readLine();
+			while (line!=null) {
+				// HANDLE LINE
+				data_line = line.split("	");
+				
+				// change "110+" to "110"
+				if(data_line[1].length()>3) data_line[1]="110";
+
+				x = Double.parseDouble(data_line[0]);
+				y = Double.parseDouble(data_line[1]);
+				z = Double.parseDouble(data_line[2]);
+				line = reader.readLine();
+
+				// create and add node
+				if(x>2010)
+				raw_nodes.add(new Node(x,y,z));
+				line_count++;
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void loadRanges() {

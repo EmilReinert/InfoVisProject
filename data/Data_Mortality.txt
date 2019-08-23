@@ -1,6 +1,3 @@
-USA: United States of America, Lifetables (period 1x1), Both sexes Last modified: 19 Nov 2018, MPv5 (May07) 
-
-Year	Age	mx	qx	ax	lx	dx	Lx	Tx	ex
 1959	0	0.02713	0.02650	0.12	100000	2650	97678	6993574	69.94
 1959	1	0.00173	0.00173	0.5	97350	168	97266	6895897	70.84
 1959	2	0.00106	0.00106	0.5	97182	103	97130	6798631	69.96
