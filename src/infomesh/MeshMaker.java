@@ -11,6 +11,7 @@ import java.io.File;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 
@@ -18,27 +19,21 @@ import javax.swing.JPanel;
 public class MeshMaker extends JFrame implements Runnable {
 	
 	//For Window pixle size
-	public static int WIDTH = 400;//TODO make adjustable
-	public static int HEIGHT = 400;	
+	public static int WIDTH = 600;//TODO make adjustable
+	public static int HEIGHT = 600;	
 	
 	private Thread thread;
 	private boolean running;
 	private BufferedImage image;
 	public int[] pixels;
-	public Camera camera;
 	public View view; //= Screen
 	
 	public MeshMaker(Model m, CoSystem co) {
-		
-	    JPanel panel = new JPanel();
-	    getContentPane().add(panel);
-
 		
 		
 		thread = new Thread(this);
 		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 		pixels = pixels = ((DataBufferInt)image.getRaster().getDataBuffer()).getData();
-		camera = new Camera(-2, 0, 1, 0, 0, -.66);
 		view = new View(WIDTH,HEIGHT,m,co);
 		addMouseListener(co);addMouseMotionListener(co);addMouseWheelListener(co);
 		setSize(WIDTH, HEIGHT);
@@ -46,6 +41,14 @@ public class MeshMaker extends JFrame implements Runnable {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBackground(Color.black);
 		setLocationRelativeTo(null);
+		
+		
+		JPanel panel = new JPanel();
+	    getContentPane().add(panel);
+	    
+	    JLabel welcome = new JLabel("Please choose which shape's area/volume you would like to calculate.");
+	    add(welcome);
+		
 		setVisible(true);
 		start();
 	}
@@ -88,7 +91,7 @@ public class MeshMaker extends JFrame implements Runnable {
 			while (delta >= 1)//Make sure update is only happening 60 times a second
 			{
 				//handles all of the logic restricted time
-				view.update(camera, pixels);
+				view.update( pixels);
 				delta--;
 			}
 			render();//displays to the screen unrestricted time
@@ -105,7 +108,8 @@ public class MeshMaker extends JFrame implements Runnable {
 	 */
 	
 	public static void main(String[] args) {
-		CoSystem co = new CoSystem(new Vec2(HEIGHT/2,WIDTH/2), HEIGHT, WIDTH, 0.5);
+		System.out.println(Color.BLUE.getRGB());
+		CoSystem co = new CoSystem(new Vec2(HEIGHT/2,WIDTH/6), HEIGHT, WIDTH, 0.5);
 		Model m = new Model(new File("data/Data_Mortality.txt"),co);
 		MeshMaker mesh = new MeshMaker(m,co);
 	}

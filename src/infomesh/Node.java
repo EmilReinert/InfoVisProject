@@ -1,17 +1,27 @@
 package infomesh;
 
+import java.awt.Color;
+
 public class Node {
 	double x;// year
 	double y;// age
-	double z;// life expectancy
-	double a;//4th dimension color value
-	Vec2 position;//2D position in diagram frame
+	private double z;// life expectancy
+	int a;//4th dimension color value
+	private Vec2 position;//2D position in diagram frame
 	
 	public Node(double x, double y, double z) {
 		this.x = x;
 		this.z = z;
 		this.y = y;
-		this.a = 0;//not in use yet
+		this.a = Color.RED.getRGB();//default node color value
+		this.position = new Vec2(0,0);
+	}
+	
+	public Node(double x, double y, double z, int a) {
+		this.x = x;
+		this.z = z;
+		this.y = y;
+		this.a = a;//not in use yet
 		this.position = new Vec2(0,0);
 	}
 	
@@ -24,5 +34,17 @@ public class Node {
 	}
 	public Vec2 getPosition() {
 		return position;
+	}
+	public double getZ() {
+		return z;
+	}
+	public void setZ(double nz) {
+		z = nz;
+	}
+	public int getColor() {
+		return a;
+	}
+	public String toString() {
+		return "Year: "+x+", Age: "+y+" Value: "+z;
 	}
 }

@@ -65,7 +65,7 @@ public class Model {
 				line = reader.readLine();
 
 				// create and add node
-				if(x>2010)
+				if(x>2012&&y<6)
 				raw_nodes.add(new Node(x,y,z));
 				line_count++;
 			}
@@ -96,8 +96,8 @@ public class Model {
 		min = 100000000; max = -100000000;
 		//Z ranges
 		for(Node n: raw_nodes) {
-			if(n.z<min)min = n.z;
-			if(n.z>max)max = n.z;
+			if(n.getZ()<min)min = n.getZ();
+			if(n.getZ()>max)max = n.getZ();
 		}
 		rangeZ = new Range(min,max);
 	}
@@ -128,7 +128,7 @@ public class Model {
 		double span = rangeZ.getDiff();
 		double min = rangeZ.getMin();
 		for(Node n: raw_nodes) {
-			n.z = (n.z-min)/span;// relative span values
+			n.setZ( (n.getZ()-min)/span);// relative span values
 		}
 	}
 
@@ -148,7 +148,11 @@ public class Model {
 	
 	public int getZData(int x, int y) {
 		// adjust field and multiply relavtive value by z axis length
-		return (int) ((nodes[x][y].z*co.getField()+((1-co.getField())/2))*co.getOrigin().x);
+		return (int) ((nodes[x][y].getZ()*co.getField()+((1-co.getField())/2))*co.getOrigin().x);
+	}
+	
+	public int getColor(int x, int y) {
+		return nodes[x][y].getColor();
 	}
 	
 	public void changeFiel(double in) {
@@ -156,6 +160,20 @@ public class Model {
 	}
 	
 	public Node getNode(int x, int y) {
+		//returns node on mesh mapping x and y
 		return nodes[x][y];
+	}
+	
+	public Node getActiveNode(Vec2 pos) {
+		//returns node closest to position vector
+		double min_distance = 10000; Node min_node =null;
+		double distance;
+		for(Node n: raw_nodes) {
+			distance = pos.getDistance(n.getPosition());
+			if(distance<min_distance) {
+				min_node = n; min_distance = distance;
+			}
+		}
+		return min_node;
 	}
 }

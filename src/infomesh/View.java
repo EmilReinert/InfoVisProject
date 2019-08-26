@@ -10,6 +10,8 @@ public class View {
 	private int width, height;
 	private Model model;
 	private CoSystem cosystem;
+	private boolean drawHorizontal = false;
+	private Node activeNode; // node closest to mouse
 	
 	public View(int w, int h, Model m, CoSystem co) {
 		width = w;
@@ -131,6 +133,9 @@ public class View {
 		for (int dim_x = 0; dim_x<model.dimX; dim_x++) {
 			for (int dim_y = 0; dim_y < model.dimY;dim_y++) {
 			/// Drawing Data Nodes
+				
+				
+				
 				//determine pix start
 				pix_start = vec2Int(origin)+ dim_x*x_step*width+dim_y*y_step;
 				x= (pix_start-pix_start%width)/width;
@@ -140,23 +145,22 @@ public class View {
 				// small correcting for edgecases
 				if(dim_x==model.dimX-1&&dim_y==0)pix_start+=4;
 				if(dim_x==0&&dim_y==model.dimY-1)pix_start-=4;
-				if(pix_start<pixels.length)
-					pixels[pix_start]=color;// startdraw point
+				
 				//determine pix end
 				
 				//takes relative z data at given position and multiplies by z axis length
 				pix_end = pix_start-model.getZData(dim_x,dim_y)*width;
 				
+				pixels[pix_end]=model.getColor(dim_x, dim_y);
 				
 				if(pix_end<0) {//pixels out of frame
 					pix_end=0; System.out.println("attention, some pixel values are outside of the coordinate system");}
-				if(pix_end<pixels.length)
-					pixels[pix_end]=color; // draw end point
+
 			/// sending coordinate data to each node
 				model.getNode(dim_x,dim_y).setPosition(int2Vec(pix_end));
 				
 			/// drawing horizontal height lines
-				drawLine(pixels, pix_start, pix_end+width, color);
+				if(drawHorizontal)drawLine(pixels, pix_start, pix_end+width, color);
 			}
 		}
 	}
@@ -185,7 +189,7 @@ public class View {
 	
 
 
-	public int[] update(Camera camera, int[] pixels) {
+	public int[] update(int[] pixels) {
 		//draw background
 		for(int n=0; n<pixels.length; n++) {
 			//if(pixels[n]!= Color.RED.getRGB())
@@ -203,14 +207,19 @@ public class View {
 		}
 		//draw origin
 		pixels[origin_n]= Color.RED.getRGB();
+		
 		//X Axis
 		drawLine(pixels,origin, new Vec2(height,0), Color.BLACK.getRGB());
 		
-		//DATA
-		drawData(pixels, Color.LIGHT_GRAY.getRGB());
+		//draw DATA
+		drawData(pixels, Color.BLUE.getRGB());
 		drawMesh(pixels, Color.BLUE.getRGB());
 		
-		//cosystem.origin.y+=1;cosystem.origin.x+=1;
+		// update active node
+		if(activeNode!=model.getActiveNode(cosystem.getPosition())){
+			activeNode = model.getActiveNode(cosystem.getPosition());
+			System.out.println(activeNode.toString());
+		}
 		return pixels;
 	}
 }
