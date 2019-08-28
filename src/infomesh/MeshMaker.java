@@ -81,7 +81,7 @@ public class MeshMaker extends JFrame implements Runnable {
 	@Override
 	public void run() {
 		long lastTime = System.nanoTime();
-		final double ns = 1000000000.0*2;/// / 60.0;//60 times per second
+		final double ns = 1000000000.0*10;/// / 60.0;//60 times per second
 		double delta = 0;
 		requestFocus();
 		while(running) {

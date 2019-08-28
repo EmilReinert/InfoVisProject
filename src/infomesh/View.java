@@ -10,7 +10,7 @@ public class View {
 	private int width, height;
 	private Model model;
 	private CoSystem cosystem;
-	private boolean drawHorizontal = false;
+	private boolean drawHorizontal = true;
 	private Node activeNode; // node closest to mouse
 	
 	public View(int w, int h, Model m, CoSystem co) {
@@ -109,7 +109,7 @@ public class View {
 
 	
 	
-	public void drawData(int[] pixels, int color) {
+	public void drawData(int[] pixels) {
 		//drawing of points at 3d diagram positions
 		
 		//bottom plane starting point z = 0
@@ -149,7 +149,7 @@ public class View {
 				//determine pix end
 				
 				//takes relative z data at given position and multiplies by z axis length
-				pix_end = pix_start-model.getZData(dim_x,dim_y)*width;
+				pix_end = pix_start-model.getAdjustedZData(dim_x,dim_y)*width;
 				
 				pixels[pix_end]=model.getColor(dim_x, dim_y);
 				
@@ -160,7 +160,7 @@ public class View {
 				model.getNode(dim_x,dim_y).setPosition(int2Vec(pix_end));
 				
 			/// drawing horizontal height lines
-				if(drawHorizontal)drawLine(pixels, pix_start, pix_end+width, color);
+				if(drawHorizontal)drawLine(pixels, pix_start, pix_end+width, model.getColor(dim_x, dim_y));
 			}
 		}
 	}
@@ -212,8 +212,8 @@ public class View {
 		drawLine(pixels,origin, new Vec2(height,0), Color.BLACK.getRGB());
 		
 		//draw DATA
-		drawData(pixels, Color.BLUE.getRGB());
-//		drawMesh(pixels, Color.BLUE.getRGB());
+		drawData(pixels);
+		//drawMesh(pixels, Color.BLUE.getRGB());
 		
 		// update active node
 		if(activeNode!=model.getActiveNode(cosystem.getPosition())){

@@ -27,6 +27,7 @@ public class Model implements KeyListener{
 	int dimY; 
 	
 	private CoSystem co;
+	boolean magnifyColor;
 	
 	
 	public Model(File f, File male, File female, CoSystem co) {
@@ -38,7 +39,6 @@ public class Model implements KeyListener{
 		loadRanges(); // load all min max ranges for X Y Z
 		//System.out.println(rangeX.toString());System.out.println(rangeY.toString());System.out.println(rangeZ.toString());
 		loadDimensions(); // create X Y plane dimensions
-		adjustValues(); // adjust z to be percentage values 
 		
 		ArrayList<Double> mf_rels = loadMFNodes(male, female); // generate realative value for nodes
 		makeColors(mf_rels); // assign relative values as color to rawnodes
@@ -53,7 +53,6 @@ public class Model implements KeyListener{
 		loadRanges(); // load all min max ranges for X Y Z
 		//System.out.println(rangeX.toString());System.out.println(rangeY.toString());System.out.println(rangeZ.toString());
 		loadDimensions(); // create X Y plane dimensions
-		adjustValues(); // adjust z to be percentage values 
 		
 		ArrayList<Double> mf_rels = loadMFNodes(male, female); // generate realative value for nodes
 		makeColors(mf_rels); // assign relative values as color to rawnodes
@@ -150,16 +149,6 @@ public class Model implements KeyListener{
 		}
 	}
 	
-	public void adjustValues() {
-		// adjust z to be percentage values 
-		//based on ranges
-		double span = rangeZ.getDiff();
-		double min = rangeZ.getMin();
-		for(Node n: raw_nodes) {
-			n.setZ( (n.getZ()-min)/span);// relative span values
-		}
-	}
-	
 	public ArrayList<Double> loadMFNodes(File male, File female) {
 		// loads the file of male and female values to obtain relative values
 		ArrayList<Double>  male_z = new ArrayList<>();// zvalue list
@@ -228,11 +217,12 @@ public class Model implements KeyListener{
 		int color; // color holder
 		for(int i = 0; i<rels.size();i++) {
 			// adjust according to min and max value
+			r = rels.get(i);
 			
-			r = (rels.get(i)-min)/mf_range.getDiff(); // magnify difference 
+			if(magnifyColor)r = (r-min)/mf_range.getDiff(); // magnify difference 
 			
 			//calculating color from relative value
-			color = Color.HSBtoRGB((float) r, 1, 1-(float) r);
+			color = Color.HSBtoRGB((float) r, 0, 1-(float) r);
 			
 			//assigning color to node !
 			raw_nodes.get(i).a = color;
@@ -253,11 +243,17 @@ public class Model implements KeyListener{
 	}
 	
 	
-	
-	
-	public int getZData(int x, int y) {
+	public int getAdjustedZData(int x, int y) {
+		//returns ADJUSTED VALUE		
+		
 		// adjust field and multiply relavtive value by z axis length
-		return (int) ((nodes[x][y].getZ()*co.getField()+((1-co.getField())/2))*co.getOrigin().x);
+		double raw = nodes[x][y].getZ();
+		double span = rangeZ.getDiff();
+		double min = rangeZ.getMin();
+
+		raw = (raw-min)/span;// relative span values
+		
+		return (int) ((raw*co.getField()+((1-co.getField())/2))*co.getOrigin().x);
 	}
 	
 	public int getColor(int x, int y) {
@@ -298,13 +294,14 @@ public class Model implements KeyListener{
 	public void keyPressed(KeyEvent e) {
 		// TODO Auto-generated method stub
 		System.out.println(e.getKeyCode());
-		if(e.getKeyCode()==49)Z_IND= 3;
-		if(e.getKeyCode()==50)Z_IND= 4;
-		if(e.getKeyCode()==51)Z_IND= 5;
-		if(e.getKeyCode()==52)Z_IND= 6;
-		if(e.getKeyCode()==53)Z_IND= 7;
-		if(e.getKeyCode()==54)Z_IND= 8;
-		if(e.getKeyCode()==55)Z_IND= 9;
+		if(e.getKeyCode()==50)Z_IND= 2;
+		if(e.getKeyCode()==51)Z_IND= 3;
+		if(e.getKeyCode()==52)Z_IND= 4;
+		if(e.getKeyCode()==53)Z_IND= 5;
+		if(e.getKeyCode()==54)Z_IND= 6;
+		if(e.getKeyCode()==55)Z_IND= 7;
+		if(e.getKeyCode()==56)Z_IND= 8;
+		if(e.getKeyCode()==57)Z_IND= 9;
 		rebuild();
 	}
 
