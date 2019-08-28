@@ -1,16 +1,23 @@
 package infomesh;
 
 import java.awt.Color;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 
-public class Model {
+public class Model implements KeyListener{
+	//Files Copy
+	File file;
+	File male;
+	File female;
+	
 	// Data
 	private ArrayList<Node> raw_nodes= new ArrayList<>();// node list
 	private Node[][] nodes; //raw nodes after mapping
-	private static int Z_IND = 6; // index for z value in database (total amount/expectations..)
+	private int Z_IND = 6; // index for z value in database (total amount/expectations..)
 	
 	Range rangeX;//min and max ranges of dimension
 	Range rangeY;
@@ -23,6 +30,9 @@ public class Model {
 	
 	
 	public Model(File f, File male, File female, CoSystem co) {
+		file = f;
+		this.male = male;
+		this.female = female;
 		this.co = co;
 		loadRawNodes(f); // get raw node data
 		loadRanges(); // load all min max ranges for X Y Z
@@ -35,6 +45,20 @@ public class Model {
 		
 		makeNodes(); // map raw nodes to X Y plane 
 
+	}
+	
+	void rebuild(){
+		raw_nodes= new ArrayList<>();
+		loadRawNodes(file); // get raw node data
+		loadRanges(); // load all min max ranges for X Y Z
+		//System.out.println(rangeX.toString());System.out.println(rangeY.toString());System.out.println(rangeZ.toString());
+		loadDimensions(); // create X Y plane dimensions
+		adjustValues(); // adjust z to be percentage values 
+		
+		ArrayList<Double> mf_rels = loadMFNodes(male, female); // generate realative value for nodes
+		makeColors(mf_rels); // assign relative values as color to rawnodes
+		
+		makeNodes(); // map raw nodes to X Y plane 
 	}
 
 
@@ -260,5 +284,34 @@ public class Model {
 			}
 		}
 		return min_node;
+	}
+
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		System.out.println(e.getKeyCode());
+		if(e.getKeyCode()==49)Z_IND= 3;
+		if(e.getKeyCode()==50)Z_IND= 4;
+		if(e.getKeyCode()==51)Z_IND= 5;
+		if(e.getKeyCode()==52)Z_IND= 6;
+		if(e.getKeyCode()==53)Z_IND= 7;
+		if(e.getKeyCode()==54)Z_IND= 8;
+		if(e.getKeyCode()==55)Z_IND= 9;
+		rebuild();
+	}
+
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }
