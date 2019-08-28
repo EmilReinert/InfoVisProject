@@ -1,5 +1,6 @@
 package infomesh;
 
+import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -7,26 +8,31 @@ import java.util.ArrayList;
 
 public class Model {
 	// Data
-	private ArrayList<Node> raw_nodes;// node list
-	private Node[][] nodes; //node mapping
+	private ArrayList<Node> raw_nodes= new ArrayList<>();// node list
+	private Node[][] nodes; //raw nodes after mapping
+	private static int Z_IND = 6; // index for z value in database (total amount/expectations..)
 	
 	Range rangeX;//min and max ranges of dimension
 	Range rangeY;
 	Range rangeZ;
+	
 	int dimX; // length of x data = amount of x vertices 
 	int dimY; 
 	
 	private CoSystem co;
 	
 	
-	public Model(File f, CoSystem co) {
-		raw_nodes = new ArrayList<>();
+	public Model(File f, File male, File female, CoSystem co) {
 		this.co = co;
 		loadRawNodes(f); // get raw node data
 		loadRanges(); // load all min max ranges for X Y Z
-		System.out.println(rangeX.toString());System.out.println(rangeY.toString());System.out.println(rangeZ.toString());
+		//System.out.println(rangeX.toString());System.out.println(rangeY.toString());System.out.println(rangeZ.toString());
 		loadDimensions(); // create X Y plane dimensions
 		adjustValues(); // adjust z to be percentage values 
+		
+		ArrayList<Double> mf_rels = loadMFNodes(male, female); // generate realative value for nodes
+		makeColors(mf_rels); // assign relative values as color to rawnodes
+		
 		makeNodes(); // map raw nodes to X Y plane 
 
 	}
@@ -49,7 +55,6 @@ public class Model {
 		String [] data_line;
 		double x, y, z; // data for one node
 		try {
-			int line_count = 0;
 			BufferedReader reader = new BufferedReader(new FileReader(f));
 			String line =reader.readLine();
 			while (line!=null) {
@@ -61,19 +66,18 @@ public class Model {
 
 				x = Double.parseDouble(data_line[0]);
 				y = Double.parseDouble(data_line[1]);
-				z = Double.parseDouble(data_line[2]);
+				z = Double.parseDouble(data_line[Z_IND]);
 				line = reader.readLine();
 
 				// create and add node
-				if(x>2012&&y<6)
+				//if(x>2012&&y<6)
 				raw_nodes.add(new Node(x,y,z));
-				line_count++;
 			}
 			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
+	}	
 	
 	public void loadRanges() {
 		// calculating min and max ranges for XYZ from node data
@@ -131,6 +135,85 @@ public class Model {
 			n.setZ( (n.getZ()-min)/span);// relative span values
 		}
 	}
+	
+	public ArrayList<Double> loadMFNodes(File male, File female) {
+		// loads the file of male and female values to obtain relative values
+		ArrayList<Double>  male_z = new ArrayList<>();// zvalue list
+		ArrayList<Double> female_z=new ArrayList<>();// zvalue list
+		String [] data_line;
+		double z; // actual value
+		//MALE
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(male));
+			String line =reader.readLine();
+			while (line!=null) {
+				// HANDLE LINE
+				data_line = line.split("	");
+				z = Double.parseDouble(data_line[Z_IND]);
+				line = reader.readLine();
+				male_z.add(z);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		//FEMALE
+		try {
+			BufferedReader reader = new BufferedReader(new FileReader(female));
+			String line =reader.readLine();
+			while (line!=null) {
+				// HANDLE LINE
+				data_line = line.split("	");
+				z = Double.parseDouble(data_line[Z_IND]);
+				line = reader.readLine();
+				female_z.add(z);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		//// loading relative values for raw nodes
+		return relMFValues(male_z,female_z);
+	}
+	
+	private ArrayList<Double> relMFValues(ArrayList<Double> male_z, ArrayList<Double> female_z) {
+		// calculating relative values to 2 lists of different values from first to second list
+		ArrayList<Double> rels= new ArrayList<>();
+		// 
+		double rel; // relative value holder 
+		for(int i = 0;i<male_z.size();i++) {
+			// calculating relative value
+			rel = male_z.get(i)/(male_z.get(i)+female_z.get(i));
+			rels.add(rel);
+		}
+		return rels;
+	}
+	
+	private void makeColors(ArrayList<Double> rels) {
+		//make and assign relative values as color to rawnodes
+		
+		//range for relative values
+		double min,max;
+		min = 1; max = 0;
+		for(double r: rels ) {
+			if(r<min)min = r;
+			if(r>max)max = r;
+		}
+		Range mf_range = new Range(min, max);
+		
+		double r; // value holder
+		int color; // color holder
+		for(int i = 0; i<rels.size();i++) {
+			// adjust according to min and max value
+			
+			r = (rels.get(i)-min)/mf_range.getDiff(); // magnify difference 
+			
+			//calculating color from relative value
+			color = Color.HSBtoRGB((float) r, 1, 1-(float) r);
+			
+			//assigning color to node !
+			raw_nodes.get(i).a = color;
+		}
+	}
 
 	public void makeNodes() {
 		//raw to mapped nodes
@@ -144,6 +227,8 @@ public class Model {
 			if(dimy>=this.dimY) {dimy=0;dimx++;}
 		}
 	}
+	
+	
 	
 	
 	public int getZData(int x, int y) {

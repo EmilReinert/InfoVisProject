@@ -19,8 +19,8 @@ import javax.swing.JPanel;
 public class MeshMaker extends JFrame implements Runnable {
 	
 	//For Window pixle size
-	public static int WIDTH = 600;//TODO make adjustable
-	public static int HEIGHT = 600;	
+	public static int WIDTH = 400;//TODO make adjustable
+	public static int HEIGHT = 400;	
 	
 	private Thread thread;
 	private boolean running;
@@ -81,7 +81,7 @@ public class MeshMaker extends JFrame implements Runnable {
 	@Override
 	public void run() {
 		long lastTime = System.nanoTime();
-		final double ns = 1000000000.0;/// / 60.0;//60 times per second
+		final double ns = 1000000000.0*2;/// / 60.0;//60 times per second
 		double delta = 0;
 		requestFocus();
 		while(running) {
@@ -110,7 +110,8 @@ public class MeshMaker extends JFrame implements Runnable {
 	public static void main(String[] args) {
 		System.out.println(Color.BLUE.getRGB());
 		CoSystem co = new CoSystem(new Vec2(HEIGHT/2,WIDTH/6), HEIGHT, WIDTH, 0.5);
-		Model m = new Model(new File("data/Data_Mortality.txt"),co);
+		Model m = new Model(new File("data/Data_Mortality.txt"),new File("data/Data_Mortality_male.txt"),
+				new File("data/Data_Mortality_female.txt"),co);
 		MeshMaker mesh = new MeshMaker(m,co);
 	}
 

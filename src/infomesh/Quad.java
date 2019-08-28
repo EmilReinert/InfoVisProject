@@ -10,7 +10,6 @@ public class Quad {
 	public Quad(Vec2 v1, Vec2 v2, Vec2 v3, Vec2 v4) {
 		//sort vecs to match abcd edges
 		a=v1;b=v2;c=v3;d=v4;
-		sortVecs();
 	}
 
 	private void sortVecs() {

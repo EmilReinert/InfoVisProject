@@ -193,7 +193,7 @@ public class View {
 		//draw background
 		for(int n=0; n<pixels.length; n++) {
 			//if(pixels[n]!= Color.RED.getRGB())
-				pixels[n] = Color.WHITE.getRGB();// Draws line in bg
+				pixels[n] = Color.GRAY.getRGB();// Draws line in bg
 		}
 		//draw coord system
 		Vec2 origin = cosystem.getOrigin();
@@ -213,13 +213,15 @@ public class View {
 		
 		//draw DATA
 		drawData(pixels, Color.BLUE.getRGB());
-		drawMesh(pixels, Color.BLUE.getRGB());
+//		drawMesh(pixels, Color.BLUE.getRGB());
 		
 		// update active node
 		if(activeNode!=model.getActiveNode(cosystem.getPosition())){
 			activeNode = model.getActiveNode(cosystem.getPosition());
 			System.out.println(activeNode.toString());
 		}
+		// draw active node
+		pixels[vec2Int(activeNode.getPosition())]=  Color.BLUE.getRGB();
 		return pixels;
 	}
 }
