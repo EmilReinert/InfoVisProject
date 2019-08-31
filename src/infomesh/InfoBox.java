@@ -13,7 +13,9 @@ public class InfoBox {
 	int width, height; // width and height for full screen
 	Diagram dia;  // holds info about diagram thus has to hold one
 	CoSystem co; // can modify co system so it holds one
+	Button drawVert;
 	Button drawMesh;
+
 	
 	Vec2 clickHolder = new Vec2(0, 0); // remembers last click to see if its changed
 	
@@ -25,7 +27,8 @@ public class InfoBox {
 		dia = d;
 		
 		//Buttons
-		drawMesh = new Button(20, dia.getHeight()+60,"Draw Mesh");
+		drawVert = new Button(20, dia.getHeight()+60,"Draw Verticals");
+		drawMesh = new Button(150, dia.getHeight()+60,"Draw Grid");
 		
 	}
 	
@@ -38,13 +41,18 @@ public class InfoBox {
 	    g2.drawString(str,width/2 -50, dia.getHeight()+30);
 
 	    //Selected Point
-	    String point = "Selected Node: " + dia.getSelectedNode().toString();
+	    String point = "Hover Node: " + dia.getSelectedNode().toString();
 	    g2.drawString(point, 20, dia.getHeight()+50);
 	    
 	    //manage buttons
 	    updateButtons();
+	    	//vertical lines draw
+	    drawVert.paint(g2);
+	    dia.setVerticalsMode(drawVert.clicked);
+	    	// mesh draw
 	    drawMesh.paint(g2);
 	    dia.setMeshMode(drawMesh.clicked);
+	    
 	    
 	    
 	    //g2.drawLine(0, 0, width, height);
@@ -66,8 +74,9 @@ public class InfoBox {
 			return;
 		}
 		// and check if a new click happened for each
-		if(drawMesh.isInside(co.getClick())) {drawMesh.click();
-		}
+		if(drawVert.isInside(co.getClick())) drawVert.click();
+		if(drawMesh.isInside(co.getClick())) drawMesh.click();
+		
 		//  update clickholder
 		clickHolder.x= co.getClick().x;
 		clickHolder.y = co.getClick().y;

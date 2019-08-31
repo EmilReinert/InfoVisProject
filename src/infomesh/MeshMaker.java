@@ -19,9 +19,9 @@ import javax.swing.JPanel;
 public class MeshMaker extends JFrame implements Runnable {
 	
 	//For Window pixle size
-	public static int WIDTH = 600;//TODO make adjustable
-	public static int HEIGHT = 600;	
-	public static int HEIGHT_legend = 200;
+	public static int WIDTH = 500;//TODO make adjustable
+	public static int HEIGHT = 500;	
+	public static int HEIGHT_legend = 150;
 	
 	public Color bg_color = Color.GRAY;
 	

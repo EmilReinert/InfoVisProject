@@ -10,9 +10,10 @@ public class Diagram {
 	private int width, height; // width, height for diagram
 	private Model model;
 	private CoSystem cosystem;
-	private boolean drawHorizontal = false;
-	private boolean drawMesh =true;
-	private Node selectedNode; // node closest to mouse
+	private boolean drawVertical = false;
+	private boolean drawMesh =false;
+	private Node hoverNode; // node closest to mouse
+	private Vec2 selectedLine; // selected line x and y values
 	Color bg_color;
 	
 	public Diagram(int w, int h, Model m, CoSystem co, Color bg_color) {
@@ -21,16 +22,17 @@ public class Diagram {
 		model = m;
 		cosystem = co;
 		this.bg_color = bg_color;
-		selectedNode = new Node(0, 0, 0);
-		
+		hoverNode = new Node(0, 0, 0);
+		selectedLine = new Vec2(-1,-1);
 	}
 	
+	/// GET AND SETTER ///
 	public int getHeight() {
 		return height;
 	}
 	
 	public Node getSelectedNode() {
-		return selectedNode;
+		return hoverNode;
 	}
 	
 	public CoSystem getCoord() {
@@ -41,6 +43,11 @@ public class Diagram {
 		drawMesh = b;
 	}
 	
+	public void setVerticalsMode(boolean b) {
+		drawVertical = b;
+	}
+	
+	/// GEOMETRIC FUNCTIONS ///
 	public int vec2Int(Vec2 v) {
 		return (int) ((v.x-1)*width+v.y);
 	}
@@ -64,6 +71,21 @@ public class Diagram {
 		return new Vec2(m, t);
 	}
 	
+	
+	/// DRAW FUNCTIONS ///
+	public void drawPoint(int[] pixels, Vec2 a, int color) {
+		drawPoint(pixels,vec2Int(a),color);
+	}
+	
+	
+	public void drawPoint(int[] pixels, int a, int color) {
+		// draws 6*6 pixels point
+		if(a>width+1)pixels[a-width-1]=pixels[a-width]=pixels[a-width+1]=color;
+		if(a>1)pixels[a-1]=pixels[a]=pixels[a+1]=color;
+		pixels[a+width-1]=pixels[a+width]=pixels[a+width+1]=color;
+	}
+	
+
 	public void drawLine(int[] pixels, int a, int b, int color) {
 		// draw line for int values
 		Vec2 vec_a = int2Vec(a);
@@ -122,7 +144,7 @@ public class Diagram {
 	}
 	
 
-	
+	/// DATA VISULIZATION ///
 	
 	public void drawData(int[] pixels) {
 		//drawing of points at 3d diagram positions
@@ -149,8 +171,6 @@ public class Diagram {
 			for (int dim_y = 0; dim_y < model.dimY;dim_y++) {
 			/// Drawing Data Nodes
 				
-				
-				
 				//determine pix start
 				pix_start = vec2Int(origin)+ dim_x*x_step*width+dim_y*y_step;
 				x= (pix_start-pix_start%width)/width;
@@ -166,7 +186,7 @@ public class Diagram {
 				//takes relative z data at given position and multiplies by z axis length
 				pix_end = pix_start-model.getAdjustedZData(dim_x,dim_y)*width;
 				
-				pixels[pix_end]=model.getColor(dim_x, dim_y);
+				drawPoint(pixels, pix_end,model.getColor(dim_x, dim_y));
 				
 				if(pix_end<0) {//pixels out of frame
 					pix_end=0; System.out.println("attention, some pixel values are outside of the coordinate system");}
@@ -175,35 +195,54 @@ public class Diagram {
 				model.getNode(dim_x,dim_y).setPosition(int2Vec(pix_end));
 				
 			/// drawing horizontal height lines
-				if(drawHorizontal)drawLine(pixels, pix_start, pix_end+width, model.getColor(dim_x, dim_y));
+				if(drawVertical)drawLine(pixels, pix_start, pix_end+width, model.getColor(dim_x, dim_y));
 			}
 		}
 	}
 	
-
 	public void drawMesh(int[] pixels, int color) {
-		//drawing Meshgrid
-		
+		//drawing Meshgrid with hightlighted line
+		Node n; //node holder
 		
 		//looping throufh X-Y dependent dimensions
 		for (int dim_x = 0; dim_x<model.dimX; dim_x++) {
 			for (int dim_y = 0; dim_y < model.dimY;dim_y++) {
-				// right neighbor node
-				if(dim_y<model.dimY-1)
-				drawLine(pixels, model.getNode(dim_x, dim_y).getPosition(), model.getNode(dim_x, dim_y+1).getPosition(), color);
-				// bottom neighbor node
-				if(dim_x<model.dimX-1)
-				drawLine(pixels, model.getNode(dim_x, dim_y).getPosition(), model.getNode(dim_x+1, dim_y).getPosition(), color);
+				n = model.getNode(dim_x, dim_y);
+				if(drawMesh||n.getX()== selectedLine.x) {
+					//draw line to neighbor node
+					if(dim_y<model.dimY-1)
+						if(n.getX()== selectedLine.x)
+							drawLine(pixels, n.getPosition(), model.getNode(dim_x, dim_y+1).getPosition(), Color.RED.getRGB());
+						else 
+							drawLine(pixels, n.getPosition(), model.getNode(dim_x, dim_y+1).getPosition(), color);
+				}
+				
 				// bottom right neighbor node
 				if (dim_x ==0&&dim_y==0)//if(dim_x<model.dimX-1&&dim_y<model.dimY-1)
 				fillQuad(pixels, new Quad ( model.getNode(dim_x, dim_y).getPosition(),model.getNode(dim_x, dim_y+1).getPosition(),
 						model.getNode(dim_x+1, dim_y+1).getPosition(),model.getNode(dim_x+1, dim_y).getPosition()),color);
 			}
 		}
+		
+		//looping throufh Y-X dependent dimensions
+		for (int dim_y = 0; dim_y<model.dimY; dim_y++) {
+			for (int dim_x = 0; dim_x < model.dimX;dim_x++) {
+				n = model.getNode(dim_x, dim_y);
+				if(drawMesh||n.getY()== selectedLine.y) {
+					// bottom neighbor node
+					if(dim_x<model.dimX-1)
+						if(n.getY()== selectedLine.y)
+							drawLine(pixels, n.getPosition(), model.getNode(dim_x+1, dim_y).getPosition(), Color.RED.getRGB());
+						else 
+							drawLine(pixels, n.getPosition(), model.getNode(dim_x+1, dim_y).getPosition(), color);
+				}
+			}
+		}
 	}
 	
 
-
+	
+	/// MAIN UPDATE LOOP ///
 	public int[] update(int[] pixels) {
 		//draw background
 		for(int n=0; n<pixels.length; n++) {
@@ -228,16 +267,24 @@ public class Diagram {
 		
 		//draw DATA
 		drawData(pixels);
-		if(drawMesh)drawMesh(pixels, Color.BLUE.getRGB());
+		drawMesh(pixels, Color.BLUE.getRGB());
 		
 		// update active node
-		if(selectedNode!=model.getActiveNode(cosystem.getMouse())){
-			selectedNode = model.getActiveNode(cosystem.getMouse());
-			//System.out.println(selectedNode.toString());
-		}
+		if(hoverNode!=model.getActiveNode(cosystem.getMouse()))
+			hoverNode = model.getActiveNode(cosystem.getMouse());
+
 		// draw active node
-		pixels[vec2Int(selectedNode.getPosition())]=  Color.RED.getRGB();
-		return pixels;
+		drawPoint(pixels,hoverNode.getPosition(),Color.RED.getRGB());
 		
+		
+		// draw horizontal node line
+		if(hoverNode.getPosition().getDistance(cosystem.getClickInv())<10) 
+			selectedLine.make(hoverNode.getXY());
+		
+		
+		// finally returns pixels
+		return pixels;
 	}
+
+
 }

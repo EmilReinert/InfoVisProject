@@ -13,10 +13,11 @@ import javax.swing.JPanel;
 public class CoSystem implements MouseListener,MouseMotionListener,MouseWheelListener{
 	private Vec2 origin; // coord origin
 	private Vec2 position;// mosue position
+	Vec2 lastclick; // last position mouse was clicked
+	
 	private int height, width;
 	private double field; //Z covered area in percent -> |///|field|///| 
-	Vec2 lastclick;
-	
+
 	public CoSystem(Vec2 o, int h, int w, double f) {
 		origin = o;
 		height=h;
@@ -40,6 +41,10 @@ public class CoSystem implements MouseListener,MouseMotionListener,MouseWheelLis
 	
 	public Vec2 getClick() {
 		return lastclick;
+	}
+	public Vec2 getClickInv() {
+		//inverse click for data visu
+		return new Vec2(lastclick.y,lastclick.x);
 	}
 	
 	@Override

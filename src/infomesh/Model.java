@@ -76,7 +76,7 @@ public class Model implements KeyListener{
 		raw_nodes.add(new Node(1995,2,0.4));
 		raw_nodes.add(new Node(1995,3,0.45));
 		raw_nodes.add(new Node(1996,1,0.5));
-		raw_nodes.add(new Node(1996,2,0.35));
+		raw_nodes.add(new Node(1996,2,0.35,Color.BLUE.getRGB()));
 		raw_nodes.add(new Node(1996,3,0.36));
 		raw_nodes.add(new Node(1997,1,0.5));
 		raw_nodes.add(new Node(1997,2,0.37));

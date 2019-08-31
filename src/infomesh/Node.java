@@ -13,7 +13,7 @@ public class Node {
 		this.x = x;
 		this.z = z;
 		this.y = y;
-		this.a = Color.RED.getRGB();//default node color value
+		this.a = Color.WHITE.getRGB();//default node color value
 		this.position = new Vec2(0,0);
 	}
 	
@@ -37,6 +37,15 @@ public class Node {
 	}
 	public double getZ() {
 		return z;
+	}
+	public double getX() {
+		return x;
+	}
+	public double getY() {
+		return y;
+	}
+	public Vec2 getXY() {
+		return new Vec2(x,y);
 	}
 	public void setZ(double nz) {
 		z = nz;
