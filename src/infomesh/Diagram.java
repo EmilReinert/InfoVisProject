@@ -37,6 +37,10 @@ public class Diagram {
 		return cosystem;
 	}
 	
+	public void setMeshMode(boolean b) {
+		drawMesh = b;
+	}
+	
 	public int vec2Int(Vec2 v) {
 		return (int) ((v.x-1)*width+v.y);
 	}
@@ -229,10 +233,11 @@ public class Diagram {
 		// update active node
 		if(selectedNode!=model.getActiveNode(cosystem.getMouse())){
 			selectedNode = model.getActiveNode(cosystem.getMouse());
-			System.out.println(selectedNode.toString());
+			//System.out.println(selectedNode.toString());
 		}
 		// draw active node
 		pixels[vec2Int(selectedNode.getPosition())]=  Color.RED.getRGB();
 		return pixels;
+		
 	}
 }

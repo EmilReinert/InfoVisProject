@@ -13,6 +13,9 @@ public class Information {
 	int width, height; // width and height for full screen
 	Diagram dia;  // holds info about diagram thus has to hold one
 	CoSystem co; // can modify co system so it holds one
+	Button drawMesh;
+	
+	Vec2 clickHolder = new Vec2(0, 0); // remembers last click to see if its changed
 	
 	public Information(int w, int h, Diagram d,CoSystem c, Color bg) {
 		bg_color = bg;
@@ -20,8 +23,11 @@ public class Information {
 		width = w;
 		co = c;
 		dia = d;
+		
+		//Buttons
+		drawMesh = new Button(20, dia.getHeight()+60,"Draw Mesh");
+		
 	}
-	
 	
 	public void paint(Graphics g) {
 	    Graphics2D g2 = (Graphics2D) g;
@@ -35,10 +41,15 @@ public class Information {
 	    String point = "Selected Node: " + dia.getSelectedNode().toString();
 	    g2.drawString(point, 20, dia.getHeight()+50);
 	    
+	    //manage buttons
+	    updateButtons();
+	    drawMesh.paint(g2);
+	    dia.setMeshMode(drawMesh.clicked);
+	    
+	    
 	    //g2.drawLine(0, 0, width, height);
 	    
-	}
-	
+	}	
 	
 	public void reset_box(Graphics2D g2) {
 		g2.setColor(bg_color);
@@ -48,5 +59,18 @@ public class Information {
 		Rectangle2D frame = new Rectangle2D.Double(50,50,200,200);
 		
 		g2.setColor(Color.BLACK);
+	}
+	
+	public void updateButtons() {
+		//test if any button was clicked
+		if(clickHolder.x==co.getClick().x&&clickHolder.y==co.getClick().y) {
+			return;
+		}
+		// and check if a new click happened for each
+		if(drawMesh.isInside(co.getClick())) {drawMesh.click();
+		}
+		//  update clickholder
+		clickHolder.x= co.getClick().x;
+		clickHolder.y = co.getClick().y;
 	}
 }

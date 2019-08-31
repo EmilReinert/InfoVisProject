@@ -6,6 +6,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.util.Random;
 
 import javax.swing.JPanel;
 
@@ -14,6 +15,7 @@ public class CoSystem implements MouseListener,MouseMotionListener,MouseWheelLis
 	private Vec2 position;// mosue position
 	private int height, width;
 	private double field; //Z covered area in percent -> |///|field|///| 
+	Vec2 lastclick;
 	
 	public CoSystem(Vec2 o, int h, int w, double f) {
 		origin = o;
@@ -21,6 +23,7 @@ public class CoSystem implements MouseListener,MouseMotionListener,MouseWheelLis
 		width=w;
 		field = f;
 	    position = new Vec2(0,0);
+	    lastclick = new Vec2(0,0);
 	}
 	
 	public Vec2 getOrigin() {
@@ -35,10 +38,18 @@ public class CoSystem implements MouseListener,MouseMotionListener,MouseWheelLis
 		return position;
 	}
 	
+	public Vec2 getClick() {
+		return lastclick;
+	}
+	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		//for INFOBOX so normal xy coords
+		//maybe line selection
+		int y = (int) (e.getY()+Math.random()*4); //random so we dont have the same click twice
+		int x =(int) (e.getX()+Math.random()*4); // i mean its less likely 
+		if(x>0)lastclick.x=x;
+		if(y>0)lastclick.y=y;
 	}
 
 	@Override
@@ -67,7 +78,7 @@ public class CoSystem implements MouseListener,MouseMotionListener,MouseWheelLis
 
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		// TODO Auto-generated method stub
+		// for origin moving
 		int x = e.getY();
 		int y =e.getX();
 		if(x>0&&x<height)origin.x=x;
@@ -76,7 +87,7 @@ public class CoSystem implements MouseListener,MouseMotionListener,MouseWheelLis
 
 	@Override
 	public void mouseMoved(MouseEvent e) {
-		// TODO Auto-generated method stub
+		//for point selection
 		int x = e.getY();
 		int y =e.getX();
 		if(x>0&&x<height)position.x=x;
