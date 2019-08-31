@@ -7,7 +7,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 
 
-public class Information {
+public class InfoBox {
 
 	Color bg_color;
 	int width, height; // width and height for full screen
@@ -17,7 +17,7 @@ public class Information {
 	
 	Vec2 clickHolder = new Vec2(0, 0); // remembers last click to see if its changed
 	
-	public Information(int w, int h, Diagram d,CoSystem c, Color bg) {
+	public InfoBox(int w, int h, Diagram d,CoSystem c, Color bg) {
 		bg_color = bg;
 		height = h;
 		width = w;
@@ -35,7 +35,7 @@ public class Information {
 	    
 	    //Test text title
 	    String str = "INFORMATION BOX";
-	    g2.drawString(str,250, dia.getHeight()+30);
+	    g2.drawString(str,width/2 -50, dia.getHeight()+30);
 
 	    //Selected Point
 	    String point = "Selected Node: " + dia.getSelectedNode().toString();
@@ -56,7 +56,6 @@ public class Information {
 	    g2.fillRect(0, 0, width*3, 3*height);
 	    g2.setColor(Color.WHITE);
 	    g2.fillRect(10, dia.getHeight()+10, width-20, height-dia.getHeight()-20);
-		Rectangle2D frame = new Rectangle2D.Double(50,50,200,200);
 		
 		g2.setColor(Color.BLACK);
 	}

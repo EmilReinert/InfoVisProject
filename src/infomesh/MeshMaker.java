@@ -30,7 +30,7 @@ public class MeshMaker extends JFrame implements Runnable {
 	private BufferedImage image;
 	public int[] pixels;
 	public Diagram diagram; //= Diagram
-	public Information info; // data info text adn gui
+	public InfoBox info; // data info text adn gui
 	
 	
 	public MeshMaker(Model m, CoSystem co) {
@@ -40,7 +40,7 @@ public class MeshMaker extends JFrame implements Runnable {
 		image = new BufferedImage(WIDTH,HEIGHT, BufferedImage.TYPE_INT_RGB);
 		pixels = pixels = ((DataBufferInt)image.getRaster().getDataBuffer()).getData();
 		diagram = new Diagram(WIDTH,HEIGHT,m,co, bg_color);
-		info = new Information(WIDTH, HEIGHT+HEIGHT_legend,diagram,co, bg_color);
+		info = new InfoBox(WIDTH, HEIGHT+HEIGHT_legend,diagram,co, bg_color);
 		addMouseListener(co);addMouseMotionListener(co);addMouseWheelListener(co);addKeyListener(m);
 		
 		setSize(WIDTH, HEIGHT+HEIGHT_legend);
@@ -84,7 +84,7 @@ public class MeshMaker extends JFrame implements Runnable {
 	@Override
 	public void run() {
 		long lastTime = System.nanoTime();
-		final double ns = 1000000000.0/10;/// / 60.0;//60 times per second
+		final double ns = 1000000000.0;/// / 60.0;//60 times per second
 		double delta = 0;
 		requestFocus();
 		while(running) {
@@ -109,7 +109,7 @@ public class MeshMaker extends JFrame implements Runnable {
 		Model m_example = new Model(new File("data/Data_Mortality.txt"), co);
 		Model m = new Model(new File("data/Data_Mortality.txt"),new File("data/Data_Mortality_male.txt"),
 				new File("data/Data_Mortality_female.txt"),co);
-		MeshMaker mesh = new MeshMaker(m_example,co);
+		MeshMaker mesh = new MeshMaker(m,co);
 	}
 
 
