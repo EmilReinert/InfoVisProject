@@ -5,19 +5,32 @@ import java.awt.Graphics2D;
 import java.time.OffsetDateTime;
 
 
-public class View {
+public class Diagram {
  
-	private int width, height;
+	private int width, height; // width, height for diagram
 	private Model model;
 	private CoSystem cosystem;
-	private boolean drawHorizontal = true;
-	private Node activeNode; // node closest to mouse
+	private boolean drawHorizontal = false;
+	private boolean drawMesh =true;
+	private Node selectedNode; // node closest to mouse
+	Color bg_color;
 	
-	public View(int w, int h, Model m, CoSystem co) {
+	public Diagram(int w, int h, Model m, CoSystem co, Color bg_color) {
 		width = w;
 		height = h;
 		model = m;
 		cosystem = co;
+		this.bg_color = bg_color;
+		selectedNode = new Node(0, 0, 0);
+		
+	}
+	
+	public int getHeight() {
+		return height;
+	}
+	
+	public Node getSelectedNode() {
+		return selectedNode;
 	}
 	
 	public CoSystem getCoord() {
@@ -64,8 +77,6 @@ public class View {
 		Vec2 mt = getLinFunction(first, second);
 		double m = mt.x;
 		double t = mt.y;
-		
-
 		float x,y,f_x;
 		if(Math.abs(m)<1) {
 			for(int n=0; n<pixels.length; n++) {
@@ -122,7 +133,7 @@ public class View {
 		int x_step = (int) (((height-origin.x)/(model.dimX-1)));
 		int y_step = (int) ((width-origin.y)/(model.dimY-1));
 		// x offset from diagonal axis
-		int x_off,x; double f_x;
+		double x_off,x; double f_x;
 		Vec2 first = origin;
 		Vec2 second = new Vec2(height,0);
 		double m = -1*(second.y-first.y)/(second.x-first.x);
@@ -140,7 +151,7 @@ public class View {
 				pix_start = vec2Int(origin)+ dim_x*x_step*width+dim_y*y_step;
 				x= (pix_start-pix_start%width)/width;
 				f_x = m*x+t;
-				x_off = (int) (origin.y-f_x);
+				x_off = origin.y-f_x;
 				pix_start+= x_off;
 				// small correcting for edgecases
 				if(dim_x==model.dimX-1&&dim_y==0)pix_start+=4;
@@ -193,7 +204,7 @@ public class View {
 		//draw background
 		for(int n=0; n<pixels.length; n++) {
 			//if(pixels[n]!= Color.RED.getRGB())
-				pixels[n] = Color.GRAY.getRGB();// Draws line in bg
+				pixels[n] = bg_color.getRGB();// Draws line in bg
 		}
 		//draw coord system
 		Vec2 origin = cosystem.getOrigin();
@@ -213,15 +224,15 @@ public class View {
 		
 		//draw DATA
 		drawData(pixels);
-		//drawMesh(pixels, Color.BLUE.getRGB());
+		if(drawMesh)drawMesh(pixels, Color.BLUE.getRGB());
 		
 		// update active node
-		if(activeNode!=model.getActiveNode(cosystem.getPosition())){
-			activeNode = model.getActiveNode(cosystem.getPosition());
-			System.out.println(activeNode.toString());
+		if(selectedNode!=model.getActiveNode(cosystem.getMouse())){
+			selectedNode = model.getActiveNode(cosystem.getMouse());
+			System.out.println(selectedNode.toString());
 		}
 		// draw active node
-		pixels[vec2Int(activeNode.getPosition())]=  Color.BLUE.getRGB();
+		pixels[vec2Int(selectedNode.getPosition())]=  Color.RED.getRGB();
 		return pixels;
 	}
 }

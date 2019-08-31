@@ -27,8 +27,17 @@ public class Model implements KeyListener{
 	int dimY; 
 	
 	private CoSystem co;
-	boolean magnifyColor;
+	boolean magnifyColor = true;
 	
+	
+	public Model(File f, CoSystem co) {
+		// Constructor for example nodes
+		file = f;this.co = co;
+		loadRawExNodes(f);
+		loadRanges();
+		loadDimensions();
+		makeNodes();
+	}
 	
 	public Model(File f, File male, File female, CoSystem co) {
 		file = f;

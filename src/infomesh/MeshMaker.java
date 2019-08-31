@@ -19,35 +19,35 @@ import javax.swing.JPanel;
 public class MeshMaker extends JFrame implements Runnable {
 	
 	//For Window pixle size
-	public static int WIDTH = 400;//TODO make adjustable
-	public static int HEIGHT = 400;	
+	public static int WIDTH = 600;//TODO make adjustable
+	public static int HEIGHT = 600;	
+	public static int HEIGHT_legend = 200;
+	
+	public Color bg_color = Color.GRAY;
 	
 	private Thread thread;
 	private boolean running;
 	private BufferedImage image;
 	public int[] pixels;
-	public View view; //= Screen
+	public Diagram diagram; //= Diagram
+	public Information info; // data info text adn gui
+	
 	
 	public MeshMaker(Model m, CoSystem co) {
 		
 		
 		thread = new Thread(this);
-		image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+		image = new BufferedImage(WIDTH,HEIGHT, BufferedImage.TYPE_INT_RGB);
 		pixels = pixels = ((DataBufferInt)image.getRaster().getDataBuffer()).getData();
-		view = new View(WIDTH,HEIGHT,m,co);
+		diagram = new Diagram(WIDTH,HEIGHT,m,co, bg_color);
+		info = new Information(WIDTH, HEIGHT+HEIGHT_legend,diagram,co, bg_color);
 		addMouseListener(co);addMouseMotionListener(co);addMouseWheelListener(co);addKeyListener(m);
-		setSize(WIDTH, HEIGHT);
+		
+		setSize(WIDTH, HEIGHT+HEIGHT_legend);
 		setTitle("InfoMesh");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBackground(Color.black);
-		setLocationRelativeTo(null);
-		
-		
-		JPanel panel = new JPanel();
-	    getContentPane().add(panel);
-	    
-	    JLabel welcome = new JLabel("Please choose which shape's area/volume you would like to calculate.");
-	    add(welcome);
+		setLocationRelativeTo(null);		
 		
 		setVisible(true);
 		start();
@@ -74,14 +74,17 @@ public class MeshMaker extends JFrame implements Runnable {
 			return;
 		}
 		Graphics g = bs.getDrawGraphics();
+		//draws diagram image
 		g.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
 		bs.show();
+		//draws info box
+		info.paint(g);
 	}
 
 	@Override
 	public void run() {
 		long lastTime = System.nanoTime();
-		final double ns = 1000000000.0*10;/// / 60.0;//60 times per second
+		final double ns = 1000000000.0/10;/// / 60.0;//60 times per second
 		double delta = 0;
 		requestFocus();
 		while(running) {
@@ -91,27 +94,22 @@ public class MeshMaker extends JFrame implements Runnable {
 			while (delta >= 1)//Make sure update is only happening 60 times a second
 			{
 				//handles all of the logic restricted time
-				view.update( pixels);
+				diagram.update( pixels);
 				delta--;
 			}
 			render();//displays to the screen unrestricted time
 		}
 	}
 	
-	/*///FUNCTION FOR POSSIBLE JPANEL??
-	public void paint(Graphics g) {
-	    super.paint(g); 
-	    Graphics2D g2 = (Graphics2D) g;
-	    Line2D lin = new Line2D.Float(100, 100, 250, 260);
-	    g2.draw(lin);
-	  }
-	 */
+	
+	 
 	
 	public static void main(String[] args) {
 		CoSystem co = new CoSystem(new Vec2(HEIGHT/2,WIDTH/6), HEIGHT, WIDTH, 0.5);
+		Model m_example = new Model(new File("data/Data_Mortality.txt"), co);
 		Model m = new Model(new File("data/Data_Mortality.txt"),new File("data/Data_Mortality_male.txt"),
 				new File("data/Data_Mortality_female.txt"),co);
-		MeshMaker mesh = new MeshMaker(m,co);
+		MeshMaker mesh = new MeshMaker(m_example,co);
 	}
 
 

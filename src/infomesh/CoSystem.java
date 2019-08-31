@@ -10,8 +10,8 @@ import java.awt.event.MouseWheelListener;
 import javax.swing.JPanel;
 
 public class CoSystem implements MouseListener,MouseMotionListener,MouseWheelListener{
-	private Vec2 origin;
-	private Vec2 position;
+	private Vec2 origin; // coord origin
+	private Vec2 position;// mosue position
 	private int height, width;
 	private double field; //Z covered area in percent -> |///|field|///| 
 	
@@ -31,7 +31,7 @@ public class CoSystem implements MouseListener,MouseMotionListener,MouseWheelLis
 		return field;
 	}
 
-	public Vec2 getPosition() {
+	public Vec2 getMouse() {
 		return position;
 	}
 	
