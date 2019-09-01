@@ -27,6 +27,13 @@ public class Diagram {
 	}
 	
 	/// GET AND SETTER ///
+	public void reset() {
+		hoverNode = new Node(0, 0, 0);
+		selectedLine = new Vec2(-1,-1);
+		cosystem.reset();
+		model.rebuild();
+	}
+	
 	public int getHeight() {
 		return height;
 	}
@@ -45,6 +52,10 @@ public class Diagram {
 	
 	public void setVerticalsMode(boolean b) {
 		drawVertical = b;
+	}
+	
+	public void setModelMode(int i) {
+		model.setZInd(i);
 	}
 	
 	/// GEOMETRIC FUNCTIONS ///
@@ -280,6 +291,7 @@ public class Diagram {
 		// draw horizontal node line
 		if(hoverNode.getPosition().getDistance(cosystem.getClickInv())<10) 
 			selectedLine.make(hoverNode.getXY());
+		
 		
 		
 		// finally returns pixels

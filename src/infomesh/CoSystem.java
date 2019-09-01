@@ -9,6 +9,7 @@ import java.awt.event.MouseWheelListener;
 import java.util.Random;
 
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 public class CoSystem implements MouseListener,MouseMotionListener,MouseWheelListener{
 	private Vec2 origin; // coord origin
@@ -18,11 +19,11 @@ public class CoSystem implements MouseListener,MouseMotionListener,MouseWheelLis
 	private int height, width;
 	private double field; //Z covered area in percent -> |///|field|///| 
 
-	public CoSystem(Vec2 o, int h, int w, double f) {
-		origin = o;
+	public CoSystem(int h, int w) {
 		height=h;
 		width=w;
-		field = f;
+		origin=new Vec2(height/2,width/6);
+		field = 0.5;
 	    position = new Vec2(0,0);
 	    lastclick = new Vec2(0,0);
 	}
@@ -47,6 +48,13 @@ public class CoSystem implements MouseListener,MouseMotionListener,MouseWheelLis
 		return new Vec2(lastclick.y,lastclick.x);
 	}
 	
+	public void reset() {
+		field = 0.5;
+		origin=new Vec2(height/2,width/6);
+	    position = new Vec2(0,0);
+	    lastclick = new Vec2(0,0);
+	}
+	
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		//for INFOBOX so normal xy coords
@@ -55,6 +63,7 @@ public class CoSystem implements MouseListener,MouseMotionListener,MouseWheelLis
 		int x =(int) (e.getX()+Math.random()*4); // i mean its less likely 
 		if(x>0)lastclick.x=x;
 		if(y>0)lastclick.y=y;
+		if(SwingUtilities.isRightMouseButton(e)) {lastclick = new Vec2(0,0);position= new Vec2(0,0);System.out.println("reset");}
 	}
 
 	@Override

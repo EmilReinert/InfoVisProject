@@ -3,11 +3,13 @@ package infomesh;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 
 
-public class InfoBox {
+public class InfoBox implements KeyListener {
 
 	Color bg_color;
 	int width, height; // width and height for full screen
@@ -15,6 +17,7 @@ public class InfoBox {
 	CoSystem co; // can modify co system so it holds one
 	Button drawVert;
 	Button drawMesh;
+	Button resetMesh;
 
 	
 	Vec2 clickHolder = new Vec2(0, 0); // remembers last click to see if its changed
@@ -29,6 +32,7 @@ public class InfoBox {
 		//Buttons
 		drawVert = new Button(20, dia.getHeight()+60,"Draw Verticals");
 		drawMesh = new Button(150, dia.getHeight()+60,"Draw Grid");
+		resetMesh = new Button(20,dia.getHeight()+100,"Reset",Color.RED,Color.GRAY);
 		
 	}
 	
@@ -52,7 +56,8 @@ public class InfoBox {
 	    	// mesh draw
 	    drawMesh.paint(g2);
 	    dia.setMeshMode(drawMesh.clicked);
-	    
+	    	//reset mesh
+	    resetMesh.paint(g2);
 	    
 	    
 	    //g2.drawLine(0, 0, width, height);
@@ -76,9 +81,40 @@ public class InfoBox {
 		// and check if a new click happened for each
 		if(drawVert.isInside(co.getClick())) drawVert.click();
 		if(drawMesh.isInside(co.getClick())) drawMesh.click();
+		if(resetMesh.isInside(co.getClick())) dia.reset();
 		
 		//  update clickholder
 		clickHolder.x= co.getClick().x;
 		clickHolder.y = co.getClick().y;
+	}
+	
+	
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		System.out.println(e.getKeyCode());
+		if(e.getKeyCode()==50)dia.setModelMode(2);
+		if(e.getKeyCode()==51)dia.setModelMode(3);
+		if(e.getKeyCode()==52)dia.setModelMode(4);
+		if(e.getKeyCode()==53)dia.setModelMode(5);
+		if(e.getKeyCode()==54)dia.setModelMode(6);
+		if(e.getKeyCode()==55)dia.setModelMode(7);
+		if(e.getKeyCode()==56)dia.setModelMode(8);
+		if(e.getKeyCode()==57)dia.setModelMode(9);
+		dia.reset();
+	}
+
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

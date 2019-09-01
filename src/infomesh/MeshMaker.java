@@ -41,7 +41,7 @@ public class MeshMaker extends JFrame implements Runnable {
 		pixels = pixels = ((DataBufferInt)image.getRaster().getDataBuffer()).getData();
 		diagram = new Diagram(WIDTH,HEIGHT,m,co, bg_color);
 		info = new InfoBox(WIDTH, HEIGHT+HEIGHT_legend,diagram,co, bg_color);
-		addMouseListener(co);addMouseMotionListener(co);addMouseWheelListener(co);addKeyListener(m);
+		addMouseListener(co);addMouseMotionListener(co);addMouseWheelListener(co);addKeyListener(info);
 		
 		setSize(WIDTH, HEIGHT+HEIGHT_legend);
 		setTitle("InfoMesh");
@@ -105,7 +105,7 @@ public class MeshMaker extends JFrame implements Runnable {
 	 
 	
 	public static void main(String[] args) {
-		CoSystem co = new CoSystem(new Vec2(HEIGHT/2,WIDTH/6), HEIGHT, WIDTH, 0.5);
+		CoSystem co = new CoSystem(HEIGHT, WIDTH);
 		Model m_example = new Model(new File("data/Data_Mortality.txt"), co);
 		Model m = new Model(new File("data/Data_Mortality.txt"),new File("data/Data_Mortality_male.txt"),
 				new File("data/Data_Mortality_female.txt"),co);

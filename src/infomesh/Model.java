@@ -8,7 +8,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
 
-public class Model implements KeyListener{
+public class Model{
 	//Files Copy
 	File file;
 	File male;
@@ -60,7 +60,7 @@ public class Model implements KeyListener{
 		raw_nodes= new ArrayList<>();
 		loadRawNodes(file); // get raw node data
 		loadRanges(); // load all min max ranges for X Y Z
-		//System.out.println(rangeX.toString());System.out.println(rangeY.toString());System.out.println(rangeZ.toString());
+		System.out.println("rebuilding");
 		loadDimensions(); // create X Y plane dimensions
 		
 		ArrayList<Double> mf_rels = loadMFNodes(male, female); // generate realative value for nodes
@@ -290,34 +290,7 @@ public class Model implements KeyListener{
 		}
 		return min_node;
 	}
-
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-
-	@Override
-	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
-		System.out.println(e.getKeyCode());
-		if(e.getKeyCode()==50)Z_IND= 2;
-		if(e.getKeyCode()==51)Z_IND= 3;
-		if(e.getKeyCode()==52)Z_IND= 4;
-		if(e.getKeyCode()==53)Z_IND= 5;
-		if(e.getKeyCode()==54)Z_IND= 6;
-		if(e.getKeyCode()==55)Z_IND= 7;
-		if(e.getKeyCode()==56)Z_IND= 8;
-		if(e.getKeyCode()==57)Z_IND= 9;
-		rebuild();
-	}
-
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
+	public void setZInd(int i) {
+		Z_IND = i;
 	}
 }
