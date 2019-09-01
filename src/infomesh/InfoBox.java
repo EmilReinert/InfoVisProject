@@ -17,6 +17,7 @@ public class InfoBox implements KeyListener {
 	CoSystem co; // can modify co system so it holds one
 	Button drawVert;
 	Button drawMesh;
+	Button colorEnhance;
 	Button resetMesh;
 
 	
@@ -32,6 +33,7 @@ public class InfoBox implements KeyListener {
 		//Buttons
 		drawVert = new Button(20, dia.getHeight()+60,"Draw Verticals");
 		drawMesh = new Button(150, dia.getHeight()+60,"Draw Grid");
+		colorEnhance = new Button(250, dia.getHeight()+60,"Enhance Colors");
 		resetMesh = new Button(20,dia.getHeight()+100,"Reset",Color.RED,Color.GRAY);
 		
 	}
@@ -56,6 +58,10 @@ public class InfoBox implements KeyListener {
 	    	// mesh draw
 	    drawMesh.paint(g2);
 	    dia.setMeshMode(drawMesh.clicked);
+	    	// enhamce colors
+	    colorEnhance.paint(g2);
+	    dia.setColorMode(colorEnhance.clicked);
+	    
 	    	//reset mesh
 	    resetMesh.paint(g2);
 	    
@@ -81,7 +87,12 @@ public class InfoBox implements KeyListener {
 		// and check if a new click happened for each
 		if(drawVert.isInside(co.getClick())) drawVert.click();
 		if(drawMesh.isInside(co.getClick())) drawMesh.click();
-		if(resetMesh.isInside(co.getClick())) dia.reset();
+		if(colorEnhance.isInside(co.getClick()))colorEnhance.click();
+		if(resetMesh.isInside(co.getClick())) {
+			dia.reset();
+			drawVert = new Button(20, dia.getHeight()+60,"Draw Verticals");
+			drawMesh = new Button(150, dia.getHeight()+60,"Draw Grid");
+		}
 		
 		//  update clickholder
 		clickHolder.x= co.getClick().x;

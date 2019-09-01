@@ -57,6 +57,9 @@ public class Diagram {
 	public void setModelMode(int i) {
 		model.setZInd(i);
 	}
+	public void setColorMode(boolean b) {
+		model.magnifyColor =b;
+	}
 	
 	/// GEOMETRIC FUNCTIONS ///
 	public int vec2Int(Vec2 v) {

@@ -17,17 +17,19 @@ public class Model{
 	// Data
 	private ArrayList<Node> raw_nodes= new ArrayList<>();// node list
 	private Node[][] nodes; //raw nodes after mapping
+	private ArrayList<Double> rels;
 	private int Z_IND = 6; // index for z value in database (total amount/expectations..)
 	
 	Range rangeX;//min and max ranges of dimension
 	Range rangeY;
 	Range rangeZ;
+	Range mf_range;
 	
 	int dimX; // length of x data = amount of x vertices 
 	int dimY; 
 	
 	private CoSystem co;
-	boolean magnifyColor = true;
+	boolean magnifyColor = false;
 	
 	
 	public Model(File f, CoSystem co) {
@@ -49,8 +51,8 @@ public class Model{
 		//System.out.println(rangeX.toString());System.out.println(rangeY.toString());System.out.println(rangeZ.toString());
 		loadDimensions(); // create X Y plane dimensions
 		
-		ArrayList<Double> mf_rels = loadMFNodes(male, female); // generate realative value for nodes
-		makeColors(mf_rels); // assign relative values as color to rawnodes
+		loadMFNodes(male, female); // generate realative value for nodes
+		makeRels(); // assign relative values as color to rawnodes
 		
 		makeNodes(); // map raw nodes to X Y plane 
 
@@ -63,8 +65,8 @@ public class Model{
 		System.out.println("rebuilding");
 		loadDimensions(); // create X Y plane dimensions
 		
-		ArrayList<Double> mf_rels = loadMFNodes(male, female); // generate realative value for nodes
-		makeColors(mf_rels); // assign relative values as color to rawnodes
+		loadMFNodes(male, female); // generate realative value for nodes
+		makeRels(); // assign relative values as color to rawnodes
 		
 		makeNodes(); // map raw nodes to X Y plane 
 	}
@@ -136,6 +138,7 @@ public class Model{
 			if(n.getZ()>max)max = n.getZ();
 		}
 		rangeZ = new Range(min,max);
+
 	}
 	
 	public void loadDimensions(){
@@ -158,7 +161,7 @@ public class Model{
 		}
 	}
 	
-	public ArrayList<Double> loadMFNodes(File male, File female) {
+	public void loadMFNodes(File male, File female) {
 		// loads the file of male and female values to obtain relative values
 		ArrayList<Double>  male_z = new ArrayList<>();// zvalue list
 		ArrayList<Double> female_z=new ArrayList<>();// zvalue list
@@ -194,7 +197,7 @@ public class Model{
 		}
 		
 		//// loading relative values for raw nodes
-		return relMFValues(male_z,female_z);
+		rels = relMFValues(male_z,female_z);
 	}
 	
 	private ArrayList<Double> relMFValues(ArrayList<Double> male_z, ArrayList<Double> female_z) {
@@ -210,31 +213,22 @@ public class Model{
 		return rels;
 	}
 	
-	private void makeColors(ArrayList<Double> rels) {
-		//make and assign relative values as color to rawnodes
-		
+	private void makeRels() {
+		// create mf range
 		//range for relative values
 		double min,max;
 		min = 1; max = 0;
-		for(double r: rels ) {
-			if(r<min)min = r;
-			if(r>max)max = r;
+		for(double r1: rels ) {
+			if(r1<min)min = r1;
+			if(r1>max)max = r1;
 		}
-		Range mf_range = new Range(min, max);
-		
+		mf_range = new Range(min, max);
+		//make and assign relative values
 		double r; // value holder
-		int color; // color holder
 		for(int i = 0; i<rels.size();i++) {
 			// adjust according to min and max value
 			r = rels.get(i);
-			
-			if(magnifyColor)r = (r-min)/mf_range.getDiff(); // magnify difference 
-			
-			//calculating color from relative value
-			color = Color.HSBtoRGB((float) r, 0, 1-(float) r);
-			
-			//assigning color to node !
-			raw_nodes.get(i).a = color;
+			raw_nodes.get(i).a = r;
 		}
 	}
 
@@ -266,7 +260,10 @@ public class Model{
 	}
 	
 	public int getColor(int x, int y) {
-		return nodes[x][y].getColor();
+		double r=nodes[x][y].getA();
+		if(magnifyColor)r = (r-mf_range.getMin())/mf_range.getDiff(); // magnify difference 
+		//calculating color from relative value
+		return Color.HSBtoRGB((float)(1-r), (float)r,0.5f);
 	}
 	
 	public void changeFiel(double in) {

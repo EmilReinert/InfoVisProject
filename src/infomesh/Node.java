@@ -6,7 +6,7 @@ public class Node {
 	double x;// year
 	double y;// age
 	private double z;// life expectancy
-	int a;//4th dimension color value
+	double a;//4th dimension color value
 	private Vec2 position;//2D position in diagram frame
 	
 	public Node(double x, double y, double z) {
@@ -50,10 +50,10 @@ public class Node {
 	public void setZ(double nz) {
 		z = nz;
 	}
-	public int getColor() {
+	public double getA() {
 		return a;
 	}
 	public String toString() {
-		return "Year: "+x+", Age: "+y+" Value: "+z;
+		return "Year: "+x+", Age: "+y+" Value: "+z+" Relation: "+a;
 	}
 }
