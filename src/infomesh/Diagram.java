@@ -14,6 +14,7 @@ public class Diagram {
 	private CoSystem cosystem;
 	private boolean drawVertical = false;
 	private boolean drawMesh =false;
+	private boolean bigPoints = false;
 	private Node hoverNode; // node closest to mouse
 	private Vec2 selectedLine; // selected line x and y values
 	Color bg_color;
@@ -56,7 +57,9 @@ public class Diagram {
 	public void setVerticalsMode(boolean b) {
 		drawVertical = b;
 	}
-	
+	public void setBigPoints(boolean b) {
+		bigPoints =b;
+	}
 	public void setModelMode(int i) {
 		model.setZInd(i);
 	}
@@ -76,8 +79,8 @@ public class Diagram {
 	}
 	
 	public int getFPS() {
-		if (selectedLine.x >0)return 5;
-		else return 30;
+		if (selectedLine.x >0)return 4;
+		else return 60;
 	}
 	
 	public Vec2 getLinFunction(Vec2 first , Vec2 second) {
@@ -96,11 +99,11 @@ public class Diagram {
 	
 	/// DRAW FUNCTIONS ///
 	public void drawPoint(Vec2 a, int color) {
-		drawPoint(pixels,vec2Int(a),color);
+		drawPoint(vec2Int(a),color);
 	}
 	
 	
-	public void drawPoint(int[] pixels, int a, int color) {
+	public void drawPoint(int a, int color) {
 		// draws 6*6 pixels point
 		if(a>width+1)pixels[a-width-1]=pixels[a-width]=pixels[a-width+1]=color;
 		if(a>1)pixels[a-1]=pixels[a]=pixels[a+1]=color;
@@ -178,8 +181,8 @@ public class Diagram {
 		
 		/// steps in xy plane
 		//for x step we need the x axis function
-		int x_step = (int) (((height-origin.x)/(model.dimX-1)));
-		int y_step = (int) ((width-origin.y)/(model.dimY-1));
+		double x_step = (height-origin.x)/(model.dimX-1);
+		double y_step = (width-origin.y)/(model.dimY);
 		// x offset from diagonal axis
 		double x_off,x; double f_x;
 		Vec2 first = origin;
@@ -194,7 +197,7 @@ public class Diagram {
 			/// Drawing Data Nodes
 				
 				//determine pix start
-				pix_start = vec2Int(origin)+ dim_x*x_step*width+dim_y*y_step;
+				pix_start = vec2Int(origin)+ (int)(dim_x*x_step)*width+(int)(dim_y*y_step);
 				x= (pix_start-pix_start%width)/width;
 				f_x = m*x+t;
 				x_off = origin.y-f_x;
@@ -208,7 +211,14 @@ public class Diagram {
 				//takes relative z data at given position and multiplies by z axis length
 				pix_end = pix_start-model.getAdjustedZData(dim_x,dim_y)*width;
 				
-				drawPoint(pixels, pix_end,model.getColor(dim_x, dim_y));
+				drawPoint(pix_end,model.getColor(dim_x, dim_y)); //main point
+				
+				if(pix_end>2*width&&bigPoints) {
+					drawPoint(pix_end+2*width,model.getColor(dim_x, dim_y));
+					drawPoint(pix_end-2*width,model.getColor(dim_x, dim_y));
+					drawPoint(pix_end-2,model.getColor(dim_x, dim_y));
+					drawPoint(pix_end+2,model.getColor(dim_x, dim_y));
+				}
 				
 				if(pix_end<0) {//pixels out of frame
 					pix_end=0; System.out.println("attention, some pixel values are outside of the coordinate system");}
@@ -269,7 +279,7 @@ public class Diagram {
 			r = 1-(double)i/width;
 			pixels[width*height-width+i]=
 					pixels[width*height-width-width+i]=
-							Color.HSBtoRGB((float)(r/3)+0.55f, 0.7f,0.7f);
+							Color.HSBtoRGB((float)(r/2.5)+0.55f, 0.8f,0.8f);
 		}
 	}
 	

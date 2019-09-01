@@ -18,6 +18,7 @@ public class InfoBox implements KeyListener {
 	Button drawVert;
 	Button drawMesh;
 	Button colorEnhance;
+	Button bigPoints;
 	Button resetMesh;
 
 	
@@ -34,6 +35,7 @@ public class InfoBox implements KeyListener {
 		drawVert = new Button(20, dia.getHeight()+60,"Draw Verticals");
 		drawMesh = new Button(150, dia.getHeight()+60,"Draw Grid");
 		colorEnhance = new Button(250, dia.getHeight()+60,"Enhance Colors");
+		bigPoints = new Button(380,dia.getHeight()+60,"Big Points");
 		resetMesh = new Button(20,dia.getHeight()+100,"Reset",Color.RED,Color.GRAY);
 		
 	}
@@ -61,7 +63,9 @@ public class InfoBox implements KeyListener {
 	    	// enhamce colors
 	    colorEnhance.paint(g2);
 	    dia.setColorMode(colorEnhance.clicked);
-	    
+	    	// make points bigger
+	    bigPoints.paint(g2);
+	    dia.setBigPoints(bigPoints.clicked);
 	    	//reset mesh
 	    resetMesh.paint(g2);
 	    
@@ -88,6 +92,7 @@ public class InfoBox implements KeyListener {
 		if(drawVert.isInside(co.getClick())) drawVert.click();
 		if(drawMesh.isInside(co.getClick())) drawMesh.click();
 		if(colorEnhance.isInside(co.getClick()))colorEnhance.click();
+		if(bigPoints.isInside(co.getClick()))bigPoints.click();
 		if(resetMesh.isInside(co.getClick())) {
 			dia.reset();
 			drawVert = new Button(20, dia.getHeight()+60,"Draw Verticals");
