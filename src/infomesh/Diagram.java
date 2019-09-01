@@ -266,10 +266,10 @@ public class Diagram {
 		// draws color wheel for relative values on last 2 lines
 		double r;
 		for (int i = 0; i< width;i++) {
-			r = (double)i/width;
+			r = 1-(double)i/width;
 			pixels[width*height-width+i]=
 					pixels[width*height-width-width+i]=
-							Color.HSBtoRGB((float)r, (float)r,1.f);
+							Color.HSBtoRGB((float)(r/3)+0.55f, 0.7f,0.7f);
 		}
 	}
 	
