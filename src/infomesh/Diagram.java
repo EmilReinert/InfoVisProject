@@ -7,6 +7,8 @@ import java.time.OffsetDateTime;
 
 public class Diagram {
  
+	private int[] pixels;
+	
 	private int width, height; // width, height for diagram
 	private Model model;
 	private CoSystem cosystem;
@@ -17,6 +19,7 @@ public class Diagram {
 	Color bg_color;
 	
 	public Diagram(int w, int h, Model m, CoSystem co, Color bg_color) {
+		pixels = new int[w*h];
 		width = w;
 		height = h;
 		model = m;
@@ -87,7 +90,7 @@ public class Diagram {
 	
 	
 	/// DRAW FUNCTIONS ///
-	public void drawPoint(int[] pixels, Vec2 a, int color) {
+	public void drawPoint(Vec2 a, int color) {
 		drawPoint(pixels,vec2Int(a),color);
 	}
 	
@@ -100,14 +103,14 @@ public class Diagram {
 	}
 	
 
-	public void drawLine(int[] pixels, int a, int b, int color) {
+	public void drawLine(int a, int b, int color) {
 		// draw line for int values
 		Vec2 vec_a = int2Vec(a);
 		Vec2 vec_b = int2Vec(b);
-		drawLine(pixels, vec_a, vec_b, color);
+		drawLine(vec_a, vec_b, color);
 	}
 	
-	public void drawLine(int[]pixels,Vec2 a, Vec2 b,int color ) {
+	public void drawLine(Vec2 a, Vec2 b,int color ) {
 		//draws line on screen by manipulating pixel values
 		Vec2 first,second;//System.out.println(a.x+" "+b.x);
 		if (a.x<b.x) {first = a;second=b;}
@@ -151,7 +154,7 @@ public class Diagram {
 	}
 	
 	
-	public void fillQuad(int[]pixels, Quad q, int rgb) {
+	public void fillQuad( Quad q, int rgb) {
 		// fill a quad with given edge points 
 		
 		//find 
@@ -160,7 +163,7 @@ public class Diagram {
 
 	/// DATA VISULIZATION ///
 	
-	public void drawData(int[] pixels) {
+	public void drawData() {
 		//drawing of points at 3d diagram positions
 		
 		//bottom plane starting point z = 0
@@ -209,12 +212,12 @@ public class Diagram {
 				model.getNode(dim_x,dim_y).setPosition(int2Vec(pix_end));
 				
 			/// drawing horizontal height lines
-				if(drawVertical)drawLine(pixels, pix_start, pix_end+width, model.getColor(dim_x, dim_y));
+				if(drawVertical)drawLine(pix_start, pix_end+width, model.getColor(dim_x, dim_y));
 			}
 		}
 	}
 	
-	public void drawMesh(int[] pixels, int color) {
+	public void drawMesh( int color) {
 		//drawing Meshgrid with hightlighted line
 		Node n; //node holder
 		
@@ -226,14 +229,14 @@ public class Diagram {
 					//draw line to neighbor node
 					if(dim_y<model.dimY-1)
 						if(n.getX()== selectedLine.x)
-							drawLine(pixels, n.getPosition(), model.getNode(dim_x, dim_y+1).getPosition(), Color.RED.getRGB());
+							drawLine(n.getPosition(), model.getNode(dim_x, dim_y+1).getPosition(), Color.RED.getRGB());
 						else 
-							drawLine(pixels, n.getPosition(), model.getNode(dim_x, dim_y+1).getPosition(), color);
+							drawLine(n.getPosition(), model.getNode(dim_x, dim_y+1).getPosition(), color);
 				}
 				
 				// bottom right neighbor node
 				if (dim_x ==0&&dim_y==0)//if(dim_x<model.dimX-1&&dim_y<model.dimY-1)
-				fillQuad(pixels, new Quad ( model.getNode(dim_x, dim_y).getPosition(),model.getNode(dim_x, dim_y+1).getPosition(),
+				fillQuad(new Quad ( model.getNode(dim_x, dim_y).getPosition(),model.getNode(dim_x, dim_y+1).getPosition(),
 						model.getNode(dim_x+1, dim_y+1).getPosition(),model.getNode(dim_x+1, dim_y).getPosition()),color);
 			}
 		}
@@ -246,9 +249,9 @@ public class Diagram {
 					// bottom neighbor node
 					if(dim_x<model.dimX-1)
 						if(n.getY()== selectedLine.y)
-							drawLine(pixels, n.getPosition(), model.getNode(dim_x+1, dim_y).getPosition(), Color.RED.getRGB());
+							drawLine(n.getPosition(), model.getNode(dim_x+1, dim_y).getPosition(), Color.RED.getRGB());
 						else 
-							drawLine(pixels, n.getPosition(), model.getNode(dim_x+1, dim_y).getPosition(), color);
+							drawLine(n.getPosition(), model.getNode(dim_x+1, dim_y).getPosition(), color);
 				}
 			}
 		}
@@ -257,7 +260,8 @@ public class Diagram {
 
 	
 	/// MAIN UPDATE LOOP ///
-	public int[] update(int[] pixels) {
+	public int[] update(int[] p) {
+		this.pixels = p;
 		//draw background
 		for(int n=0; n<pixels.length; n++) {
 			//if(pixels[n]!= Color.RED.getRGB())
@@ -277,18 +281,18 @@ public class Diagram {
 		pixels[origin_n]= Color.RED.getRGB();
 		
 		//X Axis
-		drawLine(pixels,origin, new Vec2(height,0), Color.BLACK.getRGB());
+		drawLine(origin, new Vec2(height,0), Color.BLACK.getRGB());
 		
 		//draw DATA
-		drawData(pixels);
-		drawMesh(pixels, Color.BLUE.getRGB());
+		drawData();
+		drawMesh( Color.BLUE.getRGB());
 		
 		// update active node
 		if(hoverNode!=model.getActiveNode(cosystem.getMouse()))
 			hoverNode = model.getActiveNode(cosystem.getMouse());
 
 		// draw active node
-		drawPoint(pixels,hoverNode.getPosition(),Color.RED.getRGB());
+		drawPoint(hoverNode.getPosition(),Color.RED.getRGB());
 		
 		
 		// draw horizontal node line
