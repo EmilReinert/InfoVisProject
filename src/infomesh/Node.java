@@ -54,6 +54,6 @@ public class Node {
 		return a;
 	}
 	public String toString() {
-		return "Year: "+x+", Age: "+y+" Value: "+z+" Relation: "+a;
+		return "Year: "+x+", Age: "+y+" Value: "+z+" Relation: "+Math.round(a * 100.0) / 100.0;
 	}
 }

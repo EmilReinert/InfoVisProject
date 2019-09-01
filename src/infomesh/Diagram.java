@@ -75,6 +75,11 @@ public class Diagram {
 		return new Vec2(x, y);
 	}
 	
+	public int getFPS() {
+		if (selectedLine.x >0)return 5;
+		else return 30;
+	}
+	
 	public Vec2 getLinFunction(Vec2 first , Vec2 second) {
 		// return m and t for a linear function f = m*x+t with  function a-> b
 		//Greradenfunktion
@@ -257,6 +262,17 @@ public class Diagram {
 		}
 	}
 	
+	public void drawColors() {
+		// draws color wheel for relative values on last 2 lines
+		double r;
+		for (int i = 0; i< width;i++) {
+			r = (double)i/width;
+			pixels[width*height-width+i]=
+					pixels[width*height-width-width+i]=
+							Color.HSBtoRGB((float)r, (float)r,1.f);
+		}
+	}
+	
 
 	
 	/// MAIN UPDATE LOOP ///
@@ -300,6 +316,8 @@ public class Diagram {
 			selectedLine.make(hoverNode.getXY());
 		
 		
+		// draw color wheel
+		drawColors();
 		
 		// finally returns pixels
 		return pixels;

@@ -52,7 +52,7 @@ public class Model{
 		loadDimensions(); // create X Y plane dimensions
 		
 		loadMFNodes(male, female); // generate realative value for nodes
-		makeRels(); // assign relative values as color to rawnodes
+		setRels(); // assign relative values as color to rawnodes
 		
 		makeNodes(); // map raw nodes to X Y plane 
 
@@ -66,7 +66,7 @@ public class Model{
 		loadDimensions(); // create X Y plane dimensions
 		
 		loadMFNodes(male, female); // generate realative value for nodes
-		makeRels(); // assign relative values as color to rawnodes
+		setRels(); // assign relative values as color to rawnodes
 		
 		makeNodes(); // map raw nodes to X Y plane 
 	}
@@ -205,15 +205,15 @@ public class Model{
 		ArrayList<Double> rels= new ArrayList<>();
 		// 
 		double rel; // relative value holder 
-		for(int i = 0;i<male_z.size();i++) {
+		for(int i = 0;i<female_z.size();i++) {
 			// calculating relative value
-			rel = male_z.get(i)/(male_z.get(i)+female_z.get(i));
+			rel = female_z.get(i)/(female_z.get(i)+male_z.get(i));
 			rels.add(rel);
 		}
 		return rels;
 	}
 	
-	private void makeRels() {
+	private void setRels() {
 		// create mf range
 		//range for relative values
 		double min,max;
@@ -263,7 +263,7 @@ public class Model{
 		double r=nodes[x][y].getA();
 		if(magnifyColor)r = (r-mf_range.getMin())/mf_range.getDiff(); // magnify difference 
 		//calculating color from relative value
-		return Color.HSBtoRGB((float)(1-r), (float)r,0.5f);
+		return Color.HSBtoRGB((float)r, (float)r,1.f);
 	}
 	
 	public void changeFiel(double in) {
