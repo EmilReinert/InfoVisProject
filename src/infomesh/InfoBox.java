@@ -95,8 +95,7 @@ public class InfoBox implements KeyListener {
 		if(bigPoints.isInside(co.getClick()))bigPoints.click();
 		if(resetMesh.isInside(co.getClick())) {
 			dia.reset();
-			drawVert = new Button(20, dia.getHeight()+60,"Draw Verticals");
-			drawMesh = new Button(150, dia.getHeight()+60,"Draw Grid");
+			resetButtons();
 		}
 		
 		//  update clickholder
@@ -104,6 +103,13 @@ public class InfoBox implements KeyListener {
 		clickHolder.y = co.getClick().y;
 	}
 	
+	public void resetButtons() {
+		//resetting buttons to unclicked
+		drawVert = new Button(20, dia.getHeight()+60,"Draw Verticals");
+		drawMesh = new Button(150, dia.getHeight()+60,"Draw Grid");
+		colorEnhance = new Button(250, dia.getHeight()+60,"Enhance Colors");
+		bigPoints = new Button(380,dia.getHeight()+60,"Big Points");
+	}
 	
 	@Override
 	public void keyTyped(KeyEvent e) {
@@ -125,6 +131,8 @@ public class InfoBox implements KeyListener {
 		if(e.getKeyCode()==56)dia.setModelMode(8);
 		if(e.getKeyCode()==57)dia.setModelMode(9);
 		dia.reset();
+		resetButtons();
+		co.reset();
 	}
 
 

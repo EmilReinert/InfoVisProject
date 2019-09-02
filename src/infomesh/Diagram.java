@@ -29,7 +29,7 @@ public class Diagram {
 		hoverNode = new Node(0, 0, 0);
 		selectedLine = new Vec2(-1,-1);
 	}
-	
+
 	/// GET AND SETTER ///
 	public void reset() {
 		hoverNode = new Node(0, 0, 0);
@@ -78,8 +78,9 @@ public class Diagram {
 		return new Vec2(x, y);
 	}
 	
-	public int getFPS() {
+	public double getFPS() {
 		if (selectedLine.x >0)return 4;
+		if(drawVertical)return 0.2;
 		else return 60;
 	}
 	
@@ -107,7 +108,7 @@ public class Diagram {
 		// draws 6*6 pixels point
 		if(a>width+1)pixels[a-width-1]=pixels[a-width]=pixels[a-width+1]=color;
 		if(a>1)pixels[a-1]=pixels[a]=pixels[a+1]=color;
-		pixels[a+width-1]=pixels[a+width]=pixels[a+width+1]=color;
+		if(a+width+1<pixels.length&&a>width)pixels[a+width-1]=pixels[a+width]=pixels[a+width+1]=color;
 	}
 	
 
@@ -181,7 +182,7 @@ public class Diagram {
 		
 		/// steps in xy plane
 		//for x step we need the x axis function
-		double x_step = (height-origin.x)/(model.dimX-1);
+		double x_step = (height-origin.x)/(model.dimX);
 		double y_step = (width-origin.y)/(model.dimY);
 		// x offset from diagonal axis
 		double x_off,x; double f_x;
@@ -203,8 +204,6 @@ public class Diagram {
 				x_off = origin.y-f_x;
 				pix_start+= x_off;
 				// small correcting for edgecases
-				if(dim_x==model.dimX-1&&dim_y==0)pix_start+=4;
-				if(dim_x==0&&dim_y==model.dimY-1)pix_start-=4;
 				
 				//determine pix end
 				
@@ -213,7 +212,7 @@ public class Diagram {
 				
 				drawPoint(pix_end,model.getColor(dim_x, dim_y)); //main point
 				
-				if(pix_end>2*width&&bigPoints) {
+				if(pix_end>2*width&&bigPoints&&pix_end<=pixels.length-2*width) {
 					drawPoint(pix_end+2*width,model.getColor(dim_x, dim_y));
 					drawPoint(pix_end-2*width,model.getColor(dim_x, dim_y));
 					drawPoint(pix_end-2,model.getColor(dim_x, dim_y));
@@ -279,7 +278,7 @@ public class Diagram {
 			r = 1-(double)i/width;
 			pixels[width*height-width+i]=
 					pixels[width*height-width-width+i]=
-							Color.HSBtoRGB((float)(r/2.5)+0.55f, 0.8f,0.8f);
+							Color.HSBtoRGB((float)(r/2.5)+0.05f, 0.8f,0.8f);
 		}
 	}
 	

@@ -15,6 +15,10 @@ public class CoSystem implements MouseListener,MouseMotionListener,MouseWheelLis
 	private Vec2 origin; // coord origin
 	private Vec2 position;// mosue position
 	Vec2 lastclick; // last position mouse was clicked
+
+	private int time =0;
+	boolean enable=true;
+	boolean disable=false;
 	
 	private int height, width;
 	private double field; //Z covered area in percent -> |///|field|///| 
@@ -22,10 +26,10 @@ public class CoSystem implements MouseListener,MouseMotionListener,MouseWheelLis
 	public CoSystem(int h, int w) {
 		height=h;
 		width=w;
-		origin=new Vec2(height/2,width/6);
+		origin=new Vec2(width/2,height/6);
 		field = 0.5;
-	    position = new Vec2(0,0);
-	    lastclick = new Vec2(0,0);
+	    position = new Vec2(1,1);
+	    lastclick = new Vec2(-100,-100);
 	}
 	
 	public Vec2 getOrigin() {
@@ -49,10 +53,33 @@ public class CoSystem implements MouseListener,MouseMotionListener,MouseWheelLis
 	}
 	
 	public void reset() {
+		origin=new Vec2(width/2,height/6);
 		field = 0.5;
-		origin=new Vec2(height/2,width/6);
-	    position = new Vec2(0,0);
-	    lastclick = new Vec2(0,0);
+	    position = new Vec2(1,1);
+	    lastclick = new Vec2(-100,-100);
+	}
+	
+	/// specials ///
+	public void startUp() {
+		if(enable) {
+			if(time<100){
+				origin.x+=3;
+				origin.y+=1;
+				field+=0.005;
+				time++;
+			}
+		}
+	}
+	
+	public void end() {
+		if(disable) {
+			if(time>0){
+				origin.x-=3;
+				origin.y-=1;
+				field-=0.005;
+				time--;
+			}
+		}
 	}
 	
 	@Override
@@ -93,10 +120,12 @@ public class CoSystem implements MouseListener,MouseMotionListener,MouseWheelLis
 	@Override
 	public void mouseDragged(MouseEvent e) {
 		// for origin moving
-		int x = e.getY();
-		int y =e.getX();
-		if(x>0&&x<height)origin.x=x;
-		if(y>0&&y<width)origin.y=y;
+		if(enable) {
+			int x = e.getY();
+			int y =e.getX();
+			if(x>0&&x<height)origin.x=x;
+			if(y>0&&y<width)origin.y=y;
+		}
 	}
 
 	@Override
@@ -112,7 +141,7 @@ public class CoSystem implements MouseListener,MouseMotionListener,MouseWheelLis
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		// TODO Auto-generated method stub
 		
-		field += 0.01*e.getPreciseWheelRotation();
+		field += 0.03*e.getPreciseWheelRotation();
 		if(field>0.9)field = 0.9;
 		if(field<0)field = 0;
 	}

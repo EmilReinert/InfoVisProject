@@ -263,7 +263,7 @@ public class Model{
 		double r=nodes[x][y].getA();
 		if(magnifyColor)r = (r-mf_range.getMin())/mf_range.getDiff(); // magnify difference 
 		//calculating color from relative value
-		return Color.HSBtoRGB((float)(r/2.5)+0.55f, 0.7f,0.7f);
+		return Color.HSBtoRGB((float)(r/2.5)+0.05f, 0.7f,0.7f);
 	}
 	
 	public void changeFiel(double in) {
@@ -288,6 +288,6 @@ public class Model{
 		return min_node;
 	}
 	public void setZInd(int i) {
-		Z_IND = i;
+		Z_IND = i;System.out.println("new Mode: "+Z_IND);
 	}
 }
