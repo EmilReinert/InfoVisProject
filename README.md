@@ -1,6 +1,8 @@
 # InfoVisProject
 InvoVIs Project for 4D Data Visulization
 
+<center><img src="data/infovis_diagram.png"></center>
+
 Beschreibung:
 
 Es handelt sich um ein Visualisierungsprogramm von 4-dimensionalen Datenbanken, durch ein 3D Koordinatensystem und Farbkomponenten, visualisiert durch Java JFrame. 
