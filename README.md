@@ -24,6 +24,6 @@ color: relative female/male relation
 - "enhance colors": transfer colors to maximal values
 - "big points": increase size of all datapoints
 - "reset": reset diagram to start position/values
-(only for smaller datasets)
+(below - only for smaller datasets!)
 - "draw verticals": draw a vertical line from each point to XY plane
 - "draw grid": connect all datapoints with their neighbours resulting in a grid surface
